@@ -1,36 +1,139 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PathPilot
+
+A career decision and execution system for early-career professionals. PathPilot helps users understand their real strengths, recommends exactly 3 realistic career paths, and provides a concrete 7-day action plan.
+
+**This is not a resume builder.** It's a tool that reduces career confusion and turns overwhelm into clear, actionable steps.
+
+## Tech Stack
+
+- **Next.js 16** (App Router) + TypeScript
+- **Tailwind CSS** + shadcn/ui
+- **Supabase** — Auth, Postgres, Storage
+- **OpenAI API** (GPT-4o) via Vercel AI SDK
+- **Zod** for validation
+- **React Hook Form** for forms
+- **pdf-parse** for PDF text extraction
+- **Framer Motion** for transitions
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- npm
+- A Supabase project
+- An OpenAI API key
+
+### 1. Clone and install
+
+```bash
+git clone <repo-url>
+cd pathpilot
+npm install
+```
+
+### 2. Set up environment variables
+
+Copy the example env file:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Fill in your values:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+OPENAI_API_KEY=sk-your-openai-key
+```
+
+### 3. Set up Supabase
+
+Run the migration SQL in your Supabase SQL editor:
+
+```bash
+# The migration file is at:
+supabase/migrations/001_initial.sql
+```
+
+This creates:
+- `profiles` table with auto-creation trigger on signup
+- `analyses` table for storing career analyses
+- `analysis_feedback` table for user feedback
+- Row-Level Security policies on all tables
+- Required indexes
+
+**Storage setup:**
+1. Go to Supabase Dashboard > Storage
+2. Create a new bucket called `cv-uploads`
+3. Set it to **private**
+4. Add a storage policy: authenticated users can upload to and read from the bucket
+
+**Auth setup:**
+1. Go to Supabase Dashboard > Authentication > Settings
+2. Enable Email/Password sign-in
+3. Set the Site URL to your deployment URL (e.g., `http://localhost:3000` for local dev)
+
+### 4. Run locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How It Works
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Sign up** with email and password
+2. **Upload your CV** (PDF) or paste CV text
+3. **Answer 10 guided questions** about work style, priorities, and constraints
+4. **Get your analysis** — the AI returns:
+   - A personal summary
+   - Top 3 strengths with evidence
+   - 3 realistic career paths with fit scores
+   - Roles to avoid
+   - A concrete 7-day action plan
+   - CV bullet rewrites
+5. **Revisit past analyses** from your dashboard
 
-## Learn More
+## Deploying to Vercel
 
-To learn more about Next.js, take a look at the following resources:
+1. Push your code to GitHub
+2. Import the repository in [Vercel](https://vercel.com)
+3. Add the environment variables from `.env.local.example`
+4. Deploy
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Important:** The OpenAI analysis call takes 15-30 seconds. On Vercel Pro, the default function timeout is 60 seconds which is sufficient. On Vercel Hobby (10s timeout), the async pattern handles this gracefully — the API returns immediately and the client polls for results.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+src/
+  app/
+    (marketing)/page.tsx      — Landing page
+    (auth)/login, signup      — Auth pages
+    (app)/dashboard           — Analysis history
+    (app)/new                 — CV upload + questionnaire wizard
+    (app)/analysis/[id]       — Results page
+    api/analyze/              — Analysis API routes
+  components/
+    analysis/                 — Results section components
+    forms/                    — Form components
+    layout/                   — App header
+    ui/                       — shadcn/ui components
+  lib/
+    supabase/                 — Supabase client setup
+    schemas.ts                — Zod validation schemas
+    prompts.ts                — AI system prompt + builder
+    openai.ts                 — OpenAI client setup
+    pdf.ts                    — PDF text extraction
+    constants.ts              — Question definitions
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **PDF parsing**: Uses `pdf-parse` v2 for server-side text extraction. Scanned/image PDFs won't extract text — users should paste text instead.
+- **OpenAI model**: Defaults to `gpt-4o`. Set `OPENAI_MODEL` env var to use a different model (e.g., `gpt-4o-mini` for lower cost).
+- **Rate limiting**: Not implemented in MVP. Consider adding for production use.
