@@ -6,7 +6,12 @@
       "Bash(npx create-next-app@latest pathpilot --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --no-turbopack)",
       "Bash(rsync -a --exclude='.git' --exclude='node_modules' /tmp/pathpilot-init/pathpilot/ .)",
       "Bash(npm install:*)",
-      "Bash(npx shadcn@latest init -d)"
+      "Bash(npx shadcn@latest init -d)",
+      "Bash(chmod +x /home/user/path-pilot/scripts/hooks/pre-commit)",
+      "Bash(git -C /home/user/path-pilot config core.hooksPath scripts/hooks)",
+      "Bash(cp /home/user/path-pilot/scripts/hooks/pre-commit /home/user/path-pilot/.git/hooks/pre-commit)",
+      "Bash(chmod +x /home/user/path-pilot/.git/hooks/pre-commit)",
+      "Bash(git config *)"
     ]
   }
 }
