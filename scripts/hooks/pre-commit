@@ -1,0 +1,23 @@
+#!/bin/sh
+# PathPilot pre-commit secret scan.
+# Runs gitleaks against staged changes and blocks commits that contain secrets.
+# Works on Linux/macOS and on Windows when invoked from Git Bash (the shell git
+# uses for hooks on Windows by default).
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  printf 'pre-commit: gitleaks not found on PATH. Install it before committing.\n' >&2
+  printf '  Releases: https://github.com/gitleaks/gitleaks/releases/latest\n' >&2
+  printf '  Bypass (NOT recommended): git commit --no-verify\n' >&2
+  exit 1
+fi
+
+gitleaks protect --staged --redact -v --config="$(git rev-parse --show-toplevel)/.gitleaks.toml"
+status=$?
+
+if [ "$status" -ne 0 ]; then
+  printf '\npre-commit: gitleaks detected secrets in staged changes. Commit blocked.\n' >&2
+  printf '  Resolve the findings above, then re-stage and commit.\n' >&2
+  printf '  Bypass (NOT recommended): git commit --no-verify\n' >&2
+fi
+
+exit "$status"

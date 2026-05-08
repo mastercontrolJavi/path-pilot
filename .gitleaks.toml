@@ -1,0 +1,35 @@
+title = "PathPilot gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "supabase-jwt"
+description = "Supabase JWT (anon or service_role)"
+regex = '''eyJ[A-Za-z0-9_-]{20,}\.eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}'''
+keywords = ["eyJ"]
+
+[[rules]]
+id = "supabase-service-role-assignment"
+description = "SUPABASE_SERVICE_ROLE_KEY assigned to a real JWT"
+regex = '''SUPABASE_SERVICE_ROLE_KEY\s*[:=]\s*["']?eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}'''
+keywords = ["SUPABASE_SERVICE_ROLE_KEY"]
+
+[[rules]]
+id = "openai-api-key"
+description = "OpenAI API key"
+regex = '''sk-(?:proj-)?[A-Za-z0-9_-]{20,}'''
+keywords = ["sk-"]
+
+[allowlist]
+description = "Allow lockfiles, the gitleaks config itself, and documented placeholders"
+paths = [
+  '''package-lock\.json''',
+  '''yarn\.lock''',
+  '''pnpm-lock\.yaml''',
+  '''\.gitleaks\.toml''',
+]
+regexes = [
+  '''your-(?:anon|service-role|openai-api)-key''',
+  '''sk-your-openai-api-key''',
+]
