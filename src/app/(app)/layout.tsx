@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "@/components/logout-button";
+import { PathPilotLogo } from "@/components/ui/logo";
 
 export default async function AppLayout({
   children,
@@ -28,8 +29,8 @@ export default async function AppLayout({
       <header className="border-b border-border/50 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link href="/dashboard" className="text-lg font-semibold tracking-tight">
-              PathPilot
+            <Link href="/dashboard" className="flex items-center">
+              <PathPilotLogo className="text-foreground" />
             </Link>
             <nav className="hidden sm:flex items-center gap-1">
               <Link
