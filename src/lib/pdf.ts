@@ -1,4 +1,6 @@
-import pdfParse from "pdf-parse";
+// pdf-parse v2 ESM build has no default export; import= targets the CJS build
+// and aligns with the @types/pdf-parse `export =` declaration
+import pdfParse = require("pdf-parse");
 
 export async function extractTextFromPdf(buffer: Buffer): Promise<string> {
   try {
