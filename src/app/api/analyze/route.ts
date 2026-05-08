@@ -47,7 +47,20 @@ export async function POST(request: Request) {
       }
 
       const buffer = Buffer.from(await fileData.arrayBuffer());
-      const extractedText = await extractTextFromPdf(buffer);
+      let extractedText: string;
+      try {
+        extractedText = await extractTextFromPdf(buffer);
+      } catch (extractError) {
+        return NextResponse.json(
+          {
+            error:
+              extractError instanceof Error
+                ? extractError.message
+                : "Could not extract text from PDF. Please paste your CV text instead.",
+          },
+          { status: 400 }
+        );
+      }
 
       if (extractedText.length < 50) {
         return NextResponse.json(

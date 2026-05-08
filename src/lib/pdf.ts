@@ -1,11 +1,24 @@
-import { PDFParse } from "pdf-parse";
+import { createRequire } from "node:module";
+
+// pdf-parse v2's ESM build has no default export; createRequire loads the CJS
+// build at runtime, which is consistent with serverExternalPackages: ["pdf-parse"]
+const require = createRequire(import.meta.url);
+const pdfParse = require("pdf-parse") as (
+  buf: Buffer
+) => Promise<{ text: string }>;
 
 export async function extractTextFromPdf(buffer: Buffer): Promise<string> {
-  const uint8 = new Uint8Array(buffer);
-  const parser = new PDFParse(uint8);
-  await (parser as unknown as { load(): Promise<void> }).load();
-  const result = await parser.getText();
-  // getText returns a TextResult object with a text property
-  const text = typeof result === "string" ? result : (result as { text: string }).text;
-  return text.trim();
+  try {
+    const data = await pdfParse(buffer);
+    if (!data.text || data.text.trim().length === 0) {
+      throw new Error(
+        "No text could be extracted from this PDF. It may be a scanned image."
+      );
+    }
+    return data.text.trim();
+  } catch (error) {
+    throw new Error(
+      `PDF extraction failed: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
 }
