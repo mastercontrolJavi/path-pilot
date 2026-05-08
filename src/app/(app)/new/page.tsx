@@ -166,6 +166,7 @@ export default function NewAnalysisPage() {
       if (!response.ok) {
         toast.error(result.error || "Something went wrong");
         setIsSubmitting(false);
+        setCurrentStep(0);
         return;
       }
 
@@ -173,6 +174,7 @@ export default function NewAnalysisPage() {
     } catch {
       toast.error("Something went wrong. Please try again.");
       setIsSubmitting(false);
+      setCurrentStep(0);
     }
   }
 
