@@ -30,8 +30,17 @@ export function FeedbackWidget({ analysisId }: FeedbackWidgetProps) {
   const sendFeedback = async (isHelpful: boolean, feedbackNotes: string) => {
     setLoading(true);
     const supabase = createClient();
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error("You must be logged in to submit feedback");
+      setLoading(false);
+      return;
+    }
+
     const { error } = await supabase.from("analysis_feedback").insert({
       analysis_id: analysisId,
+      user_id: user.id,
       helpful: isHelpful,
       notes: feedbackNotes || null,
     });
