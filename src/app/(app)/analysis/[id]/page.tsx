@@ -70,23 +70,25 @@ export default async function AnalysisPage({
 
   return (
     <div>
-      {/* Back link + date */}
-      <div className="flex items-center gap-3 mb-6">
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          Dashboard
-        </Link>
-        <span className="text-muted-foreground/30">|</span>
-        <span className="text-sm text-muted-foreground">
-          {new Date(analysis.created_at).toLocaleDateString("en-US", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-          })}
-        </span>
+      {/* Sticky back link header */}
+      <div className="sticky top-14 z-30 -mx-6 px-6 py-3 bg-white/90 backdrop-blur-sm border-b border-border/50 mb-6">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Dashboard
+          </Link>
+          <span className="text-muted-foreground/30">|</span>
+          <span className="text-sm text-muted-foreground">
+            {new Date(analysis.created_at).toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </span>
+        </div>
       </div>
 
       <div className="space-y-8">
