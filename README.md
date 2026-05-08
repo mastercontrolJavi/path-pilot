@@ -132,6 +132,32 @@ src/
     constants.ts              — Question definitions
 ```
 
+## Security: pre-commit secret scanning
+
+This repo ships with a [gitleaks](https://github.com/gitleaks/gitleaks) pre-commit hook that blocks any commit containing a JWT, OpenAI key, or other secret. Config lives at `.gitleaks.toml`; the hook itself is in `scripts/hooks/`.
+
+After cloning, every contributor must do two things:
+
+**1. Install gitleaks**
+
+- **macOS:** `brew install gitleaks`
+- **Linux:** download the latest binary from <https://github.com/gitleaks/gitleaks/releases/latest> and place it on `PATH`
+- **Windows:**
+  1. Download `gitleaks_x.y.z_windows_x64.zip` from <https://github.com/gitleaks/gitleaks/releases/latest>
+  2. Extract `gitleaks.exe` to `C:\tools\gitleaks.exe`
+  3. Add `C:\tools` to your PATH (System Properties → Environment Variables → Path → New)
+  4. Open a fresh terminal and run `gitleaks version` to confirm
+
+**2. Point git at the versioned hooks directory**
+
+```bash
+git config core.hooksPath scripts/hooks
+```
+
+That makes `scripts/hooks/pre-commit` (POSIX, used by Git Bash on Windows) run on every commit. A `pre-commit.bat` is included as a fallback for setups that invoke hooks through `cmd.exe` directly.
+
+To bypass the hook in an emergency (not recommended): `git commit --no-verify`.
+
 ## Notes
 
 - **PDF parsing**: Uses `pdf-parse` v2 for server-side text extraction. Scanned/image PDFs won't extract text — users should paste text instead.
