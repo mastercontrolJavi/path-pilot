@@ -35,8 +35,12 @@ export function AnalysisLoading({ analysisId }: { analysisId: string }) {
 
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-white border border-border/50 flex items-center justify-center mb-6">
-        <Loader2 className="w-7 h-7 text-primary animate-spin" />
+      <div className="relative mb-6">
+        {/* Pulsing ring */}
+        <span className="absolute inset-0 rounded-2xl border-2 border-primary/30 animate-ping" />
+        <div className="relative w-16 h-16 rounded-2xl bg-white border border-border/50 flex items-center justify-center">
+          <Loader2 className="w-7 h-7 text-primary animate-spin" />
+        </div>
       </div>
       <h2 className="text-lg font-semibold mb-2">Analyzing your profile</h2>
       <p className="text-sm text-muted-foreground animate-pulse">
