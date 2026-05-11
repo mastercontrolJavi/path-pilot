@@ -148,7 +148,7 @@ export default function NewAnalysisPage() {
         }
 
         cvFilePath = fileName;
-        finalCvText = "(PDF uploaded — see file)";
+        finalCvText = "(PDF uploaded - see file)";
       }
 
       const response = await fetch("/api/analyze", {
