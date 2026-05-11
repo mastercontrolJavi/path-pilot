@@ -48,7 +48,7 @@ export default async function MarketingLayout({
       </header>
       <main className="flex-1">{children}</main>
       <footer className="border-t border-border/50 py-8 text-center text-sm text-muted-foreground">
-        <p>PathPilot — Career direction, not just applications.</p>
+        <p>PathPilot - Career direction, not just applications.</p>
       </footer>
     </div>
   );
