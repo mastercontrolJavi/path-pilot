@@ -10,7 +10,7 @@ import { ConfidenceNote } from "@/components/analysis/confidence-note";
 import { ArrowRight } from "lucide-react";
 
 export const metadata = {
-  title: "Sample Analysis — PathPilot",
+  title: "Sample Analysis - PathPilot",
   description:
     "See what a PathPilot career analysis looks like before signing up.",
 };
@@ -37,7 +37,7 @@ export default function DemoPage() {
       {/* Demo label */}
       <div className="flex items-center gap-3 mb-6">
         <span className="text-sm font-medium text-muted-foreground px-2.5 py-1 rounded-md bg-accent border border-border/50">
-          Sample analysis — Maya Chen, Marketing Graduate
+          Sample analysis - Maya Chen, Marketing Graduate
         </span>
       </div>
 
