@@ -74,7 +74,7 @@ export default function LandingPage() {
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed font-normal">
             Upload your CV. Answer 10 questions. Get 3 realistic paths and a
-            7-day plan — powered by AI.
+            7-day plan, powered by AI.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
@@ -182,7 +182,7 @@ export default function LandingPage() {
             href="/signup"
             className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-white text-[#0F0F0F] font-medium text-base hover:bg-white/90 transition-colors shadow-sm"
           >
-            Get started — it&apos;s free
+            Get started - it&apos;s free
           </Link>
         </div>
       </section>
