@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "PathPilot — Find your career path",
+  title: "PathPilot - Find your career path",
   description:
     "Stop guessing what to apply for. Upload your CV, answer a few questions, and get 3 realistic career paths plus a 7-day action plan.",
 };
