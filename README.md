@@ -2,6 +2,8 @@
 
 A career decision and execution system for early-career professionals. PathPilot helps users understand their real strengths, recommends exactly 3 realistic career paths, and provides a concrete 7-day action plan.
 
+![PathPilot screenshot](public/screenshot.png)
+
 **This is not a resume builder.** It's a tool that reduces career confusion and turns overwhelm into clear, actionable steps.
 
 ## Tech Stack
