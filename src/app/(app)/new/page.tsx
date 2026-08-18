@@ -66,15 +66,13 @@ export default function NewAnalysisPage() {
     return cvText.trim().length >= 50;
   }, [cvMode, cvFile, cvText]);
 
-
-
   async function handleNext() {
     if (currentStep === 0) {
       if (!isCvValid()) {
         toast.error(
           cvMode === "upload"
             ? "Please upload your CV"
-            : "Please paste at least 50 characters of your CV"
+            : "Please paste at least 50 characters of your CV",
         );
         return;
       }
@@ -95,7 +93,11 @@ export default function NewAnalysisPage() {
     e.preventDefault();
     setIsDragOver(false);
     const file = e.dataTransfer.files[0];
-    if (file && file.type === "application/pdf" && file.size <= 5 * 1024 * 1024) {
+    if (
+      file &&
+      file.type === "application/pdf" &&
+      file.size <= 5 * 1024 * 1024
+    ) {
       setCvFile(file);
     } else {
       toast.error("Please upload a PDF file under 5MB");
@@ -104,7 +106,11 @@ export default function NewAnalysisPage() {
 
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (file && file.type === "application/pdf" && file.size <= 5 * 1024 * 1024) {
+    if (
+      file &&
+      file.type === "application/pdf" &&
+      file.size <= 5 * 1024 * 1024
+    ) {
       setCvFile(file);
     } else if (file) {
       toast.error("Please upload a PDF file under 5MB");
@@ -177,10 +183,25 @@ export default function NewAnalysisPage() {
   return (
     <div className="max-w-3xl mx-auto">
       {/* Progress */}
-      <div className="mb-14">
-        <div className="mb-4 flex items-center justify-between font-mono text-[10px] uppercase tracking-[.16em] text-muted-foreground"><span>Your path</span><span>Step {currentStep + 1} of {TOTAL_STEPS}</span></div>
-        <div className="relative flex items-center justify-between px-1"><span className="absolute left-2 right-2 top-1/2 h-px bg-border" />
-          {Array.from({length:TOTAL_STEPS},(_,i)=><span key={i} className={`relative z-10 size-3 rounded-full border ${i<currentStep?"border-primary bg-primary":i===currentStep?"border-primary bg-[#faf7f2] [animation:pulse-star_1.8s_ease-in-out_infinite]":"border-border bg-[#faf7f2]"}`}>{i<currentStep&&<Check className="absolute -left-0.5 -top-0.5 size-4 text-primary"/>}</span>)}
+      <div className="mb-9 sm:mb-14">
+        <div className="mb-4 flex items-center justify-between font-mono text-[10px] uppercase tracking-[.16em] text-muted-foreground">
+          <span>Your path</span>
+          <span>
+            Step {currentStep + 1} of {TOTAL_STEPS}
+          </span>
+        </div>
+        <div className="relative flex items-center justify-between px-1">
+          <span className="absolute left-2 right-2 top-1/2 h-px bg-border" />
+          {Array.from({ length: TOTAL_STEPS }, (_, i) => (
+            <span
+              key={i}
+              className={`relative z-10 size-3 rounded-full border ${i < currentStep ? "border-primary bg-primary" : i === currentStep ? "border-primary bg-[#faf7f2] [animation:pulse-star_1.8s_ease-in-out_infinite]" : "border-border bg-[#faf7f2]"}`}
+            >
+              {i < currentStep && (
+                <Check className="absolute -left-0.5 -top-0.5 size-4 text-primary" />
+              )}
+            </span>
+          ))}
         </div>
       </div>
 
@@ -189,7 +210,10 @@ export default function NewAnalysisPage() {
         <AnimatePresence mode="wait">
           <motion.div
             key={currentStep}
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.18 }}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.18 }}
           >
             {currentStep === 0 && (
               <StepCV
@@ -227,13 +251,13 @@ export default function NewAnalysisPage() {
         </AnimatePresence>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between mt-8 pt-6 border-t">
+        <div className="mobile-safe-bottom sticky -bottom-24 z-20 -mx-4 mt-8 flex items-center justify-between border-t bg-background/95 px-4 pt-4 backdrop-blur sm:static sm:mx-0 sm:bg-transparent sm:px-0 sm:pt-6">
           <Button
             type="button"
             variant="ghost"
             onClick={handleBack}
             disabled={currentStep === 0}
-            className="gap-2"
+            className="min-h-11 gap-2 px-4"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
@@ -243,7 +267,7 @@ export default function NewAnalysisPage() {
             <Button
               type="button"
               onClick={handleNext}
-              className="gap-2 rounded-xl"
+              className="min-h-11 gap-2 rounded-xl px-5"
             >
               Next
               <ArrowRight className="w-4 h-4" />
@@ -252,7 +276,7 @@ export default function NewAnalysisPage() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="gap-2 rounded-xl"
+              className="min-h-11 gap-2 rounded-xl px-5"
             >
               {isSubmitting ? (
                 <>
@@ -306,17 +330,20 @@ function StepCV({
       <p className="text-xs text-muted-foreground/80 mb-6">
         Your CV is processed by OpenAI to generate this analysis. We don&apos;t
         sell your data.{" "}
-        <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">
+        <Link
+          href="/privacy"
+          className="underline underline-offset-2 hover:text-foreground"
+        >
           Privacy Policy
         </Link>
       </p>
 
       {/* Mode toggle */}
-      <div className="flex gap-2 mb-6">
+      <div className="grid grid-cols-2 gap-2 mb-6">
         <button
           type="button"
           onClick={() => setCvMode("upload")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex min-h-11 items-center justify-center gap-2 rounded-lg px-2 py-2 text-sm font-medium transition-colors ${
             cvMode === "upload"
               ? "bg-primary text-primary-foreground"
               : "bg-accent text-muted-foreground hover:text-foreground"
@@ -328,7 +355,7 @@ function StepCV({
         <button
           type="button"
           onClick={() => setCvMode("paste")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex min-h-11 items-center justify-center gap-2 rounded-lg px-2 py-2 text-sm font-medium transition-colors ${
             cvMode === "paste"
               ? "bg-primary text-primary-foreground"
               : "bg-accent text-muted-foreground hover:text-foreground"
@@ -368,7 +395,7 @@ function StepCV({
               }}
               onDragLeave={() => setIsDragOver(false)}
               onDrop={onFileDrop}
-              className={`flex flex-col items-center justify-center p-12 rounded-xl border-2 border-dashed cursor-pointer transition-colors ${
+              className={`flex flex-col items-center justify-center px-4 py-10 sm:p-12 rounded-xl border-2 border-dashed cursor-pointer transition-colors ${
                 isDragOver
                   ? "border-primary bg-primary/5"
                   : "border-border/50 hover:border-border"
@@ -378,9 +405,7 @@ function StepCV({
               <p className="text-sm font-medium mb-1">
                 Drop your CV here or click to browse
               </p>
-              <p className="text-xs text-muted-foreground">
-                PDF only, max 5MB
-              </p>
+              <p className="text-xs text-muted-foreground">PDF only, max 5MB</p>
               <input
                 type="file"
                 accept=".pdf"
@@ -400,9 +425,7 @@ function StepCV({
           />
           <p className="text-xs text-muted-foreground mt-2">
             {cvText.length} characters
-            {cvText.length > 0 && cvText.length < 50
-              ? " (minimum 50)"
-              : ""}
+            {cvText.length > 0 && cvText.length < 50 ? " (minimum 50)" : ""}
           </p>
         </div>
       )}
@@ -462,7 +485,7 @@ function StepQuestion({
                         ? "bg-primary text-primary-foreground border-primary"
                         : atMax
                           ? "bg-accent/50 text-muted-foreground/50 border-border/30 cursor-not-allowed"
-                        : "bg-[#faf7f2] text-foreground border-border hover:border-primary"
+                          : "bg-[#faf7f2] text-foreground border-border hover:border-primary"
                     }`}
                   >
                     {selected && <Check className="w-3.5 h-3.5" />}

@@ -18,7 +18,9 @@ export function CvRewritesSection({
         {rewrites.map((rewrite, i) => (
           <div
             key={i}
-            data-reveal data-interactive className="p-5 rounded-2xl bg-white border border-border/50"
+            data-reveal
+            data-interactive
+            className="p-4 sm:p-5 rounded-2xl bg-white border border-border/50"
           >
             <div className="grid md:grid-cols-[1fr_auto_1fr] gap-4 items-start mb-3">
               <div className="p-3 rounded-xl bg-red-50 border border-red-100">
@@ -31,9 +33,7 @@ export function CvRewritesSection({
                 <ArrowRight className="w-4 h-4 text-muted-foreground" />
               </div>
               <div className="p-3 rounded-xl bg-green-50 border border-green-100">
-                <p className="text-xs font-medium text-green-600 mb-1">
-                  After
-                </p>
+                <p className="text-xs font-medium text-green-600 mb-1">After</p>
                 <p className="text-sm text-green-800 leading-relaxed">
                   {rewrite.after}
                 </p>

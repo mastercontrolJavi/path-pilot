@@ -12,7 +12,19 @@ function FitScoreRing({ score }: { score: number }) {
   return (
     <div className="relative w-16 h-16 shrink-0">
       <svg className="w-16 h-16 -rotate-90" viewBox="0 0 64 64">
-        {Array.from({length:12},(_,i)=><line key={i} x1="32" y1="1" x2="32" y2="6" stroke="currentColor" strokeWidth="1" className="text-primary" transform={`rotate(${i*30} 32 32)`}/>) }
+        {Array.from({ length: 12 }, (_, i) => (
+          <line
+            key={i}
+            x1="32"
+            y1="1"
+            x2="32"
+            y2="6"
+            stroke="currentColor"
+            strokeWidth="1"
+            className="text-primary"
+            transform={`rotate(${i * 30} 32 32)`}
+          />
+        ))}
         <circle
           cx="32"
           cy="32"
@@ -42,24 +54,20 @@ function FitScoreRing({ score }: { score: number }) {
   );
 }
 
-function CareerPathCard({
-  path,
-  index,
-}: {
-  path: CareerPath;
-  index: number;
-}) {
+function CareerPathCard({ path, index }: { path: CareerPath; index: number }) {
   return (
-    <div data-reveal data-interactive className="p-6 rounded-xl bg-[#f3eee6] border">
+    <div
+      data-reveal
+      data-interactive
+      className="p-5 sm:p-6 rounded-xl bg-[#f3eee6] border"
+    >
       <div className="flex items-start gap-4 mb-4">
         <FitScoreRing score={path.fit_score} />
         <div className="flex-1 min-w-0">
           <p className="text-xs font-medium text-muted-foreground mb-0.5">
             Path {index + 1}
           </p>
-          <h3 className="text-lg font-semibold tracking-tight">
-            {path.title}
-          </h3>
+          <h3 className="text-lg font-semibold tracking-tight">{path.title}</h3>
         </div>
       </div>
 
@@ -126,7 +134,12 @@ export function CareerPathsSection({
 }) {
   return (
     <section data-reveal>
-      <p className="font-mono text-xs uppercase tracking-[.18em] text-primary">The destinations</p><h2 className="mb-8 mt-3 text-4xl">Three paths worth walking</h2>
+      <p className="font-mono text-xs uppercase tracking-[.18em] text-primary">
+        The destinations
+      </p>
+      <h2 className="mb-8 mt-3 text-3xl sm:text-4xl">
+        Three paths worth walking
+      </h2>
       <div className="grid gap-4 lg:grid-cols-3">
         {paths.map((path, i) => (
           <CareerPathCard key={path.title} path={path} index={i} />
