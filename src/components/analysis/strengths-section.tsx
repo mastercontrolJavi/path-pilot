@@ -5,7 +5,11 @@ type Strength = AnalysisResult["strengths"][number];
 
 function StrengthCard({ strength }: { strength: Strength }) {
   return (
-    <div data-reveal data-interactive className="p-5 rounded-xl bg-[#f3eee6] border">
+    <div
+      data-reveal
+      data-interactive
+      className="p-5 rounded-xl bg-[#f3eee6] border"
+    >
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold">{strength.name}</h3>
         <span className="font-mono text-xs text-primary">
@@ -42,7 +46,14 @@ export function StrengthsSection({
 }) {
   return (
     <section data-reveal>
-      <div className="mb-8"><p className="font-mono text-xs uppercase tracking-[.18em] text-primary">Evidence in your trail</p><h2 className="mt-3 text-4xl">The strengths that keep showing up</h2></div>
+      <div className="mb-8">
+        <p className="font-mono text-xs uppercase tracking-[.18em] text-primary">
+          Evidence in your trail
+        </p>
+        <h2 className="mt-3 text-3xl sm:text-4xl">
+          The strengths that keep showing up
+        </h2>
+      </div>
       <div className="grid gap-4 md:grid-cols-3">
         {strengths.map((s) => (
           <StrengthCard key={s.name} strength={s} />

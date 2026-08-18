@@ -71,8 +71,8 @@ export default async function AnalysisPage({
   return (
     <div>
       {/* Sticky back link header */}
-      <div className="sticky top-14 z-30 -mx-6 px-6 py-3 bg-[#faf7f2]/90 backdrop-blur-sm border-b mb-10">
-        <div className="flex items-center gap-3">
+      <div className="sticky top-14 z-30 -mx-4 px-4 py-3 sm:-mx-6 sm:px-6 bg-[#faf7f2]/90 backdrop-blur-sm border-b mb-10">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <Link
             href="/dashboard"
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -91,7 +91,7 @@ export default async function AnalysisPage({
         </div>
       </div>
 
-      <div className="space-y-16 [&>section]:report-section">
+      <div className="space-y-12 sm:space-y-16 [&>section]:report-section">
         <SummaryHeader summary={result.summary} />
         <StrengthsSection strengths={result.strengths} />
         <CareerPathsSection paths={result.career_paths} />
