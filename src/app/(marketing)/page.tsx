@@ -2,15 +2,18 @@ import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 
 function Constellation() {
-  return <div className="relative mx-auto aspect-[4/3] max-w-[620px]" aria-hidden="true">
+  const route = "M35 355 C115 360 95 258 180 278 S265 195 335 220 S410 118 486 145 S540 82 580 58";
+
+  return <div className="constellation relative mx-auto aspect-[4/3] max-w-[620px]" aria-hidden="true">
     <svg viewBox="0 0 620 460" className="h-full w-full overflow-visible">
-      <path d="M35 355 C115 360 95 258 180 278 S265 195 335 220 S410 118 486 145 S540 82 580 58" fill="none" stroke="#1f4b3a" strokeWidth="2" strokeDasharray="3 8" />
-      {[[35,355],[112,325],[180,278],[258,246],[335,220],[410,161],[486,145],[540,92]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r={i<4?4:5} fill={i<3?"#faf7f2":"#1f4b3a"} stroke="#1f4b3a" strokeWidth="2"/>)}
-      <g transform="translate(580 58)" fill="#1f4b3a"><path d="M0-24 5-6 24 0 5 6 0 24-5 6-24 0-5-6Z"/><circle r="9" fill="#faf7f2"/><circle r="5"/></g>
-      <circle cx="72" cy="96" r="2" fill="#6b6459"/><circle cx="280" cy="85" r="3" fill="#6b6459"/><circle cx="475" cy="330" r="2" fill="#6b6459"/>
+      <defs><mask id="route-reveal"><path className="constellation-reveal" d={route} pathLength="1" fill="none" stroke="white" strokeWidth="7" /></mask></defs>
+      <path d={route} fill="none" stroke="#1f4b3a" strokeWidth="2" strokeDasharray="3 8" mask="url(#route-reveal)" />
+      {[[35,355],[112,325],[180,278],[258,246],[335,220],[410,161],[486,145],[540,92]].map(([x,y],i)=><circle className="constellation-waypoint" style={{animationDelay:`${420 + i * 150}ms`}} key={i} cx={x} cy={y} r={i<4?4:5} fill={i<3?"#faf7f2":"#1f4b3a"} stroke="#1f4b3a" strokeWidth="2"/>)}
+      <g className="constellation-star" transform="translate(580 58)" fill="#1f4b3a"><path d="M0-24 5-6 24 0 5 6 0 24-5 6-24 0-5-6Z"/><circle r="9" fill="#faf7f2"/><circle r="5"/></g>
+      <g className="constellation-sky"><circle cx="72" cy="96" r="2" fill="#6b6459"/><circle cx="280" cy="85" r="3" fill="#6b6459"/><circle cx="475" cy="330" r="2" fill="#6b6459"/></g>
     </svg>
-    <p className="absolute bottom-4 left-12 font-mono text-[10px] uppercase tracking-[.22em] text-muted-foreground">Your experience</p>
-    <p className="absolute right-0 top-3 font-mono text-[10px] uppercase tracking-[.22em] text-primary">A clear direction</p>
+    <p className="constellation-origin absolute bottom-4 left-12 font-mono text-[10px] uppercase tracking-[.22em] text-muted-foreground">Your experience</p>
+    <p className="constellation-destination absolute right-0 top-3 font-mono text-[10px] uppercase tracking-[.22em] text-primary">A clear direction</p>
   </div>;
 }
 
