@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod/v4";
@@ -134,8 +135,18 @@ export default function NewAnalysisPage() {
 
       // Upload PDF if provided
       if (cvMode === "upload" && cvFile) {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user) {
+          toast.error("You must be signed in to upload a CV.");
+          setIsSubmitting(false);
+          return;
+        }
+
         const fileExt = "pdf";
-        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+        const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
           .from("cv-uploads")
@@ -315,6 +326,13 @@ function StepCV({
       </h2>
       <p className="text-sm text-muted-foreground mb-6">
         We&apos;ll analyze your experience to find patterns and strengths.
+      </p>
+      <p className="text-xs text-muted-foreground/80 mb-6">
+        Your CV is processed by OpenAI to generate this analysis. We don&apos;t
+        sell your data.{" "}
+        <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">
+          Privacy Policy
+        </Link>
       </p>
 
       {/* Mode toggle */}
