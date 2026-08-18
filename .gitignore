@@ -42,6 +42,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# unrelated nested project, not part of PathPilot
+/axis-os-command
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
