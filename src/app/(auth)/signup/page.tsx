@@ -61,7 +61,7 @@ export default function SignupPage() {
 
   if (isSuccess) {
     return (
-      <div className="border-t border-primary/30 pt-8 text-center">
+      <div data-reveal className="border-t border-primary/30 pt-8 text-center">
         <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-4">
           <CheckCircle2 className="w-6 h-6 text-green-600" />
         </div>
@@ -83,7 +83,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="border-t border-primary/30 pt-8">
+    <div data-reveal className="border-t border-primary/30 pt-8">
       <div className="mb-6">
         <h1 className="font-display text-3xl mb-2">
           Create your account

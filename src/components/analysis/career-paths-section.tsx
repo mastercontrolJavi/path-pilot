@@ -50,7 +50,7 @@ function CareerPathCard({
   index: number;
 }) {
   return (
-    <div className="p-6 rounded-xl bg-[#f3eee6] border">
+    <div data-reveal data-interactive className="p-6 rounded-xl bg-[#f3eee6] border">
       <div className="flex items-start gap-4 mb-4">
         <FitScoreRing score={path.fit_score} />
         <div className="flex-1 min-w-0">
@@ -125,7 +125,7 @@ export function CareerPathsSection({
   paths: AnalysisResult["career_paths"];
 }) {
   return (
-    <section>
+    <section data-reveal>
       <p className="font-mono text-xs uppercase tracking-[.18em] text-primary">The destinations</p><h2 className="mb-8 mt-3 text-4xl">Three paths worth walking</h2>
       <div className="grid gap-4 lg:grid-cols-3">
         {paths.map((path, i) => (
