@@ -62,7 +62,7 @@ export default async function AppLayout({
       </main>
       <nav
         aria-label="App navigation"
-        className="mobile-safe-bottom fixed inset-x-0 bottom-0 z-50 grid grid-cols-2 border-t bg-[#faf7f2]/95 px-3 pt-2 backdrop-blur-md sm:hidden"
+        className="mobile-safe-bottom fixed inset-x-0 bottom-0 z-50 grid grid-cols-2 border-t bg-background px-3 pt-2 shadow-[0_-8px_24px_rgba(28,25,23,0.08)] sm:hidden"
       >
         <Link
           href="/dashboard"
