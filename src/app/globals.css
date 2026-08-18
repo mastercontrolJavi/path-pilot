@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Fragment+Mono&family=Fraunces:opsz,wght@9..144,100..900&display=swap");
+@import url("https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -13,7 +15,22 @@
   --font-mono: var(--font-fragment); --radius-lg: .75rem; --radius-xl: 1rem;
 }
 
-:root { --font-fraunces:"Fraunces"; --font-general:"General Sans"; --font-fragment:"Fragment Mono"; --background:#faf7f2; --foreground:#1c1917; --card:#f3eee6; --surface:#f3eee6; --primary:#1f4b3a; --muted-foreground:#6b6459; --border:#dcd4c9; --destructive:#b3401f; }
+:root {
+  --font-fraunces:"Fraunces",Georgia,serif;
+  --font-general:"General Sans","Avenir Next","Segoe UI",sans-serif;
+  --font-fragment:"Fragment Mono","Courier New",monospace;
+  --background:#faf7f2;
+  --foreground:#1c1917;
+  --card:#f3eee6;
+  --surface:#f3eee6;
+  --primary:#1f4b3a;
+  --muted-foreground:#6b6459;
+  --border:#dcd4c9;
+  --destructive:#b3401f;
+  --popover:#f3eee6;
+  --popover-foreground:#1c1917;
+  --radius:.75rem;
+}
 * { border-color:var(--border); }
 html { scroll-behavior:smooth; }
 body { margin:0; background:var(--background); color:var(--foreground); font-family:var(--font-general), sans-serif; }
