@@ -58,7 +58,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div data-reveal className="border-t border-primary/30 pt-8">
+    <div data-reveal="fade" className="border-t border-primary/30 pt-8">
       <div className="mb-6">
         <h1 className="font-display text-3xl mb-2">
           Welcome back
@@ -72,6 +72,7 @@ export default function LoginPage() {
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
+            className="h-11 rounded-xl bg-[#f3eee6]/35 px-3"
             id="email"
             type="email"
             placeholder="you@example.com"
@@ -86,6 +87,7 @@ export default function LoginPage() {
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
           <Input
+            className="h-11 rounded-xl bg-[#f3eee6]/35 px-3"
             id="password"
             type="password"
             placeholder="Your password"
@@ -101,7 +103,7 @@ export default function LoginPage() {
 
         <Button
           type="submit"
-          className="w-full rounded-xl"
+          className="h-11 w-full rounded-xl"
           disabled={isLoading}
         >
           {isLoading ? (
