@@ -135,8 +135,18 @@ export default function NewAnalysisPage() {
 
       // Upload PDF if provided
       if (cvMode === "upload" && cvFile) {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user) {
+          toast.error("You must be signed in to upload a CV.");
+          setIsSubmitting(false);
+          return;
+        }
+
         const fileExt = "pdf";
-        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+        const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
           .from("cv-uploads")

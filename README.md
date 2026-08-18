@@ -53,25 +53,28 @@ OPENAI_API_KEY=sk-your-openai-key
 
 ### 3. Set up Supabase
 
-Run the migration SQL in your Supabase SQL editor:
+Run the migration SQL in your Supabase SQL editor, in order:
 
 ```bash
-# The migration file is at:
+# The migration files are at:
 supabase/migrations/001_initial.sql
+supabase/migrations/002_cv_uploads_storage_policy.sql
 ```
 
-This creates:
+`001_initial.sql` creates:
 - `profiles` table with auto-creation trigger on signup
 - `analyses` table for storing career analyses
 - `analysis_feedback` table for user feedback
 - Row-Level Security policies on all tables
 - Required indexes
 
-**Storage setup:**
-1. Go to Supabase Dashboard > Storage
-2. Create a new bucket called `cv-uploads`
-3. Set it to **private**
-4. Add a storage policy: authenticated users can upload to and read from the bucket
+`002_cv_uploads_storage_policy.sql` creates:
+- The `cv-uploads` storage bucket (private)
+- Owner-scoped Storage policies, so a user can only upload, read, or delete
+  their own CV files — not other users' files. This relies on uploads being
+  written to `{user_id}/{filename}.pdf` (already handled in the app code);
+  don't grant a bucket-wide "authenticated users can read from the bucket"
+  policy, since that lets any signed-in user read every other user's CV.
 
 **Auth setup:**
 1. Go to Supabase Dashboard > Authentication > Settings
