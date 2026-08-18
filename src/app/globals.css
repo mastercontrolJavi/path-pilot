@@ -98,3 +98,7 @@ html[data-motion="ready"] [data-route-step] { transition-delay:calc(var(--route-
 .header-route-link:hover::before,.header-route-link:focus-visible::before { opacity:1; transform:scale(1); }
 @keyframes header-route-in { to{transform:scaleX(1)} }
 @media (prefers-reduced-motion:reduce) { .hero-kicker,.hero-line>span,.hero-support,.hero-actions,.hero-footnote,.group\/site-header::after { animation:none!important; opacity:1; transform:none; } }
+
+/* Form panels fade without a clipping mask so focus rings remain fully visible. */
+html[data-motion="ready"] [data-reveal="fade"] { clip-path:none; }
+html[data-motion="ready"] [data-reveal="fade"][data-visible="true"] { clip-path:none; }
