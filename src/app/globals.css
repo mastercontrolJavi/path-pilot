@@ -26,3 +26,18 @@ button,a,input,textarea { transition:color .18s ease,background-color .18s ease,
 @keyframes arrive { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
 @keyframes pulse-star { 50%{box-shadow:0 0 0 6px rgba(31,75,58,.08)} }
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+/* The hero route draws once, then settles into a quiet breathing destination. */
+.constellation-reveal { stroke-dasharray:1; stroke-dashoffset:1; animation:draw-route 1.75s cubic-bezier(.55,.05,.3,1) .25s forwards; }
+.constellation-waypoint { opacity:0; transform-box:fill-box; transform-origin:center; animation:mark-waypoint .35s ease-out forwards; }
+.constellation-star { opacity:0; transform-box:fill-box; transform-origin:center; animation:arrive-star .7s cubic-bezier(.2,.7,.25,1) 1.65s forwards, breathe-star 3.5s ease-in-out 2.4s infinite; }
+.constellation-sky { opacity:0; animation:fade-detail .7s ease .15s forwards; }
+.constellation-origin,.constellation-destination { opacity:0; animation:label-arrive .5s ease forwards; }
+.constellation-origin { animation-delay:.25s; }
+.constellation-destination { animation-delay:1.75s; }
+@keyframes draw-route { to{stroke-dashoffset:0} }
+@keyframes mark-waypoint { from{opacity:0;transform:scale(.55)} to{opacity:1;transform:scale(1)} }
+@keyframes arrive-star { from{opacity:0;transform:scale(.72) rotate(-12deg)} to{opacity:1;transform:scale(1) rotate(0)} }
+@keyframes breathe-star { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.82;transform:scale(1.06)} }
+@keyframes fade-detail { to{opacity:1} }
+@keyframes label-arrive { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
