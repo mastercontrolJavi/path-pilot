@@ -6,13 +6,13 @@ export function ActionPlanSection({
   steps: AnalysisResult["action_plan"];
 }) {
   return (
-    <section>
+    <section data-reveal>
       <p className="font-mono text-xs uppercase tracking-[.18em] text-primary">Seven waypoints</p><h2 className="mb-8 mt-3 text-4xl">Your route for the next seven days</h2>
       <div className="relative space-y-0 border-l border-primary/25 ml-4">
         {steps.map((step) => (
           <div
             key={step.step}
-            className="relative flex items-start gap-5 pb-9 pl-9 last:pb-0"
+            data-reveal className="relative flex items-start gap-5 pb-9 pl-9 last:pb-0"
           >
             <div className="absolute -left-4 top-0 grid size-8 place-items-center rounded-full border border-primary bg-[#faf7f2]">
               <span className="font-mono text-[10px] text-primary">

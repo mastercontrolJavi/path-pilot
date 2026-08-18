@@ -58,7 +58,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="border-t border-primary/30 pt-8">
+    <div data-reveal className="border-t border-primary/30 pt-8">
       <div className="mb-6">
         <h1 className="font-display text-3xl mb-2">
           Welcome back

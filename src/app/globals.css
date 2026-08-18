@@ -41,3 +41,19 @@ button,a,input,textarea { transition:color .18s ease,background-color .18s ease,
 @keyframes breathe-star { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.82;transform:scale(1.06)} }
 @keyframes fade-detail { to{opacity:1} }
 @keyframes label-arrive { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
+
+/* Scroll motion follows the product metaphor: each section enters like the next point on a route. */
+html[data-motion="ready"] [data-reveal] { opacity:0; transform:translateY(14px); clip-path:inset(0 0 10% 0); transition:opacity .65s ease,transform .65s cubic-bezier(.2,.7,.2,1),clip-path .75s cubic-bezier(.2,.7,.2,1); }
+html[data-motion="ready"] [data-reveal][data-visible="true"] { opacity:1; transform:none; clip-path:inset(0); }
+html[data-motion="ready"] [data-route-step] { transition-delay:calc(var(--route-index, 0) * 90ms); }
+[data-interactive] { position:relative; isolation:isolate; overflow:hidden; }
+[data-interactive]::before { content:""; position:absolute; z-index:-1; inset:0; opacity:0; background:radial-gradient(120px circle at var(--pointer-x,50%) var(--pointer-y,50%),rgba(250,247,242,.2),transparent 75%); transition:opacity .25s ease; }
+[data-interactive]:hover::before { opacity:1; }
+[data-interactive]:focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
+[data-route-step] > span:first-child { transition:background-color .45s ease,transform .45s ease; }
+[data-route-step][data-visible="true"] > span:first-child { background:var(--primary); transform:scale(1.08); }
+[data-route]::before { content:""; position:absolute; left:-1px; top:0; bottom:0; width:1px; background:var(--primary); transform:scaleY(0); transform-origin:top; transition:transform 1.35s cubic-bezier(.2,.7,.2,1) .2s; }
+#how[data-visible="true"] [data-route]::before { transform:scaleY(1); }
+@media (hover:hover) { [data-route-step]:hover { transform:translateX(6px); } [data-route-step]:hover h3 { color:var(--primary); } }
+[data-route-step]:nth-child(1){--route-index:0}[data-route-step]:nth-child(2){--route-index:1}[data-route-step]:nth-child(3){--route-index:2}
+@media (prefers-reduced-motion:reduce) { [data-reveal],[data-route]::before,[data-route-step] { transition:none!important; } }
