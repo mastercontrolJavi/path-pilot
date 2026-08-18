@@ -1,6 +1,6 @@
 import type { AnalysisResult } from "@/lib/schemas";
 import { Badge } from "@/components/ui/badge";
-import { Compass, TrendingUp, AlertCircle } from "lucide-react";
+import { TrendingUp, AlertCircle } from "lucide-react";
 
 type CareerPath = AnalysisResult["career_paths"][number];
 
@@ -12,6 +12,7 @@ function FitScoreRing({ score }: { score: number }) {
   return (
     <div className="relative w-16 h-16 shrink-0">
       <svg className="w-16 h-16 -rotate-90" viewBox="0 0 64 64">
+        {Array.from({length:12},(_,i)=><line key={i} x1="32" y1="1" x2="32" y2="6" stroke="currentColor" strokeWidth="1" className="text-primary" transform={`rotate(${i*30} 32 32)`}/>) }
         <circle
           cx="32"
           cy="32"
@@ -49,7 +50,7 @@ function CareerPathCard({
   index: number;
 }) {
   return (
-    <div className="p-6 rounded-2xl bg-white border border-border/50">
+    <div className="p-6 rounded-xl bg-[#f3eee6] border">
       <div className="flex items-start gap-4 mb-4">
         <FitScoreRing score={path.fit_score} />
         <div className="flex-1 min-w-0">
@@ -64,7 +65,7 @@ function CareerPathCard({
 
       <div className="space-y-3 mb-4">
         <div className="flex items-start gap-2">
-          <TrendingUp className="w-3.5 h-3.5 text-green-600 mt-0.5 shrink-0" />
+          <TrendingUp className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
           <div>
             <p className="text-xs font-medium text-muted-foreground">
               Why it fits
@@ -73,7 +74,7 @@ function CareerPathCard({
           </div>
         </div>
         <div className="flex items-start gap-2">
-          <Compass className="w-3.5 h-3.5 text-blue-600 mt-0.5 shrink-0" />
+          <span className="mt-1 size-2 shrink-0 rounded-full border border-primary" />
           <div>
             <p className="text-xs font-medium text-muted-foreground">
               Why it&apos;s realistic
@@ -84,7 +85,7 @@ function CareerPathCard({
           </div>
         </div>
         <div className="flex items-start gap-2">
-          <AlertCircle className="w-3.5 h-3.5 text-amber-600 mt-0.5 shrink-0" />
+          <AlertCircle className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
           <div>
             <p className="text-xs font-medium text-muted-foreground">
               Tradeoff
@@ -125,12 +126,7 @@ export function CareerPathsSection({
 }) {
   return (
     <section>
-      <div className="flex items-center gap-2 mb-4">
-        <Compass className="w-4 h-4 text-foreground/70" />
-        <h2 className="text-lg font-semibold tracking-tight">
-          Your 3 career paths
-        </h2>
-      </div>
+      <p className="font-mono text-xs uppercase tracking-[.18em] text-primary">The destinations</p><h2 className="mb-8 mt-3 text-4xl">Three paths worth walking</h2>
       <div className="grid gap-4 lg:grid-cols-3">
         {paths.map((path, i) => (
           <CareerPathCard key={path.title} path={path} index={i} />

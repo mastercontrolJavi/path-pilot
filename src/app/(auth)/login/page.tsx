@@ -58,9 +58,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-border/50 p-8 shadow-sm">
+    <div className="border-t border-primary/30 pt-8">
       <div className="mb-6">
-        <h1 className="text-xl font-semibold tracking-tight mb-1">
+        <h1 className="font-display text-3xl mb-2">
           Welcome back
         </h1>
         <p className="text-sm text-muted-foreground">
