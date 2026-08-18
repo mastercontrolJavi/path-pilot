@@ -7,7 +7,7 @@ function Constellation() {
 
   return (
     <div
-      className="constellation relative mx-auto aspect-[4/3] max-w-[620px]"
+      className="constellation relative mx-auto aspect-[4/3] w-full max-w-[680px] lg:w-[108%]"
       aria-hidden="true"
     >
       <svg viewBox="0 0 620 460" className="h-full w-full overflow-visible">
@@ -224,14 +224,14 @@ export default function LandingPage() {
         data-reveal
         className="bg-primary px-4 py-16 sm:px-6 sm:py-20 text-[#faf7f2]"
       >
-        <div className="mx-auto flex max-w-5xl flex-col items-start justify-between gap-8 md:flex-row md:items-center">
+        <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-2 md:items-center">
           <h2 className="max-w-2xl text-4xl leading-tight md:text-5xl">
             You don’t need the whole journey figured out.
           </h2>
           <Link
             href="/signup"
             data-interactive
-            className="shrink-0 rounded-full bg-[#faf7f2] px-6 py-3 text-sm font-medium text-primary"
+            className="w-fit rounded-full bg-[#faf7f2] px-6 py-3 text-sm font-medium text-primary md:justify-self-center"
           >
             Take the first step →
           </Link>
