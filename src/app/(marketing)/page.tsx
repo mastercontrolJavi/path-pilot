@@ -22,7 +22,7 @@ export default function LandingPage() {
     <section data-hero className="relative overflow-hidden px-6 pb-24 pt-20 md:pb-32 md:pt-28">
       <div className="mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-[1fr_.9fr]">
         <div className="hero-copy">
-          <p className="hero-kicker mb-7 flex items-center gap-3 font-mono text-xs uppercase tracking-[.18em] text-primary"><span className="inline-block size-1.5 rounded-full bg-primary" />Career direction, made personal</p>
+          <p className="hero-kicker mb-7 font-mono text-xs uppercase tracking-[.18em] text-primary">Career direction, made personal</p>
           <h1 className="max-w-3xl text-[46px] leading-[.98] tracking-[-.045em] sm:text-6xl md:text-7xl lg:text-[88px]" aria-label="The next step is closer than it feels.">
             <span className="hero-line"><span>The next step is</span></span>
             <span className="hero-line"><span>closer than it</span></span>
