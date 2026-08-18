@@ -56,8 +56,8 @@ export default async function MarketingLayout({
 
       <main className="flex-1">{children}</main>
 
-      <footer className="border-t bg-[#f3eee6]">
-        <div className="max-w-6xl mx-auto px-4 py-10 sm:px-6">
+      <footer className="border-t bg-[#f3eee6] px-4 sm:px-6">
+        <div className="mx-auto max-w-6xl py-10">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-8">
             <div className="max-w-sm">
               <PathPilotLogo className="text-foreground mb-3" />
