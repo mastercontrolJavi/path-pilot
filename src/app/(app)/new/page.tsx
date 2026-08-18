@@ -251,7 +251,7 @@ export default function NewAnalysisPage() {
         </AnimatePresence>
 
         {/* Navigation */}
-        <div className="mobile-safe-bottom sticky -bottom-24 z-20 -mx-4 mt-8 flex items-center justify-between border-t bg-background/95 px-4 pt-4 backdrop-blur sm:static sm:mx-0 sm:bg-transparent sm:px-0 sm:pt-6">
+        <div className="mobile-safe-bottom sticky bottom-20 z-20 -mx-4 mt-8 flex items-center justify-between border-t bg-background/95 px-4 pt-4 backdrop-blur sm:static sm:mx-0 sm:bg-transparent sm:px-0 sm:pt-6">
           <Button
             type="button"
             variant="ghost"

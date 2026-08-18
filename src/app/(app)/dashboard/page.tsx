@@ -95,7 +95,7 @@ export default async function DashboardPage() {
                 key={a.id}
                 href={`/analysis/${a.id}`}
                 data-reveal
-                className="journey-entry group grid grid-cols-[1fr_auto] items-center gap-3 border-b px-1 py-6 sm:grid-cols-[auto_1fr_auto] sm:gap-5 sm:px-3 md:grid-cols-[48px_140px_1fr_auto]"
+                className="journey-entry group grid grid-cols-[auto_1fr_auto] items-center gap-3 border-b px-1 py-6 sm:gap-5 sm:px-3 md:grid-cols-[48px_140px_1fr_auto]"
               >
                 <span className="hidden font-mono text-xs text-muted-foreground md:block">
                   {String(analyses.length - i).padStart(2, "0")}

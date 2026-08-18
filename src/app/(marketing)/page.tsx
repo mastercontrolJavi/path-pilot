@@ -136,7 +136,7 @@ export default function LandingPage() {
       <section
         id="how"
         data-reveal
-        className="border-y bg-[#f3eee6] px-4 py-16 sm:px-6 sm:py-24"
+        className="scroll-mt-32 border-y bg-[#f3eee6] px-4 py-16 sm:px-6 sm:py-24 md:scroll-mt-20"
       >
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-12 md:grid-cols-[.8fr_1.2fr]">
@@ -193,7 +193,7 @@ export default function LandingPage() {
       <section
         id="destination"
         data-reveal
-        className="px-4 py-16 sm:px-6 sm:py-24 md:py-32"
+        className="scroll-mt-32 px-4 py-16 sm:px-6 sm:py-24 md:scroll-mt-20 md:py-32"
       >
         <div className="mx-auto max-w-6xl">
           <p className="font-mono text-xs uppercase tracking-[.18em] text-primary">
