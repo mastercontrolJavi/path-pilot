@@ -102,3 +102,16 @@ html[data-motion="ready"] [data-route-step] { transition-delay:calc(var(--route-
 /* Form panels fade without a clipping mask so focus rings remain fully visible. */
 html[data-motion="ready"] [data-reveal="fade"] { clip-path:none; }
 html[data-motion="ready"] [data-reveal="fade"][data-visible="true"] { clip-path:none; }
+
+/* Journey entries behave like bearings: the destination mark responds as a single unit. */
+.journey-entry { position:relative; isolation:isolate; overflow:hidden; transition:background-color .35s ease,padding-left .35s cubic-bezier(.2,.7,.2,1); }
+.journey-entry::before { content:""; position:absolute; z-index:-1; inset:0; background:linear-gradient(90deg,rgba(31,75,58,.055),rgba(31,75,58,.015) 70%,transparent); opacity:0; transform:translateX(-18px); transition:opacity .35s ease,transform .45s cubic-bezier(.2,.7,.2,1); }
+.journey-star-mark { position:relative; transform-origin:center; transition:transform .55s cubic-bezier(.2,.75,.2,1),filter .4s ease; }
+.journey-star-halo { transform:scale(.55); opacity:0; transition:transform .5s cubic-bezier(.2,.75,.2,1),opacity .35s ease,border-color .35s ease; }
+.journey-entry-arrow { transition:color .3s ease,transform .4s cubic-bezier(.2,.75,.2,1); }
+.journey-entry:hover::before,.journey-entry:focus-visible::before { opacity:1; transform:none; }
+.journey-entry:hover .journey-star-mark,.journey-entry:focus-visible .journey-star-mark { transform:rotate(45deg) scale(1.08); filter:drop-shadow(0 2px 4px rgba(31,75,58,.16)); }
+.journey-entry:hover .journey-star-halo,.journey-entry:focus-visible .journey-star-halo { opacity:1; transform:scale(1); border-color:rgba(31,75,58,.22); }
+.journey-entry:hover .journey-entry-arrow,.journey-entry:focus-visible .journey-entry-arrow { color:var(--primary); transform:translate(2px,-2px); }
+.journey-entry:focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
+@media (prefers-reduced-motion:reduce) { .journey-entry,.journey-entry::before,.journey-star-mark,.journey-star-halo,.journey-entry-arrow { transition:none!important; } }
