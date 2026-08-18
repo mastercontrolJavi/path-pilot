@@ -19,14 +19,18 @@ function Constellation() {
 
 export default function LandingPage() {
   return <div>
-    <section data-reveal className="relative overflow-hidden px-6 pb-24 pt-20 md:pb-32 md:pt-28">
+    <section data-hero className="relative overflow-hidden px-6 pb-24 pt-20 md:pb-32 md:pt-28">
       <div className="mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-[1fr_.9fr]">
-        <div>
-          <p className="mb-7 font-mono text-xs uppercase tracking-[.18em] text-primary">Career direction, made personal</p>
-          <h1 className="max-w-3xl text-6xl leading-[.98] tracking-[-.045em] md:text-7xl lg:text-[88px]">The next step is closer than it feels.</h1>
-          <p className="mt-7 max-w-xl text-lg leading-8 text-muted-foreground">PathPilot reads the story already inside your CV, then turns it into three realistic career paths and one calm plan for the week ahead.</p>
-          <div className="mt-9 flex flex-wrap gap-3"><Link href="/signup" data-interactive className="inline-flex h-12 items-center gap-3 rounded-full bg-primary px-6 text-sm font-medium text-white hover:-translate-y-0.5 hover:bg-[#173d2e]">Find my path <ArrowRight className="size-4"/></Link><Link href="/demo" data-interactive className="inline-flex h-12 items-center rounded-full border px-6 text-sm font-medium hover:bg-[#f3eee6]">Read a sample report</Link></div>
-          <p className="mt-5 text-xs text-muted-foreground">Free to try · About 10 minutes · Your data stays yours</p>
+        <div className="hero-copy">
+          <p className="hero-kicker mb-7 flex items-center gap-3 font-mono text-xs uppercase tracking-[.18em] text-primary"><span className="inline-block size-1.5 rounded-full bg-primary" />Career direction, made personal</p>
+          <h1 className="max-w-3xl text-[46px] leading-[.98] tracking-[-.045em] sm:text-6xl md:text-7xl lg:text-[88px]" aria-label="The next step is closer than it feels.">
+            <span className="hero-line"><span>The next step is</span></span>
+            <span className="hero-line"><span>closer than it</span></span>
+            <span className="hero-line"><span>feels.</span></span>
+          </h1>
+          <p className="hero-support mt-7 max-w-xl text-lg leading-8 text-muted-foreground">PathPilot reads the story already inside your CV, then turns it into three realistic career paths and one calm plan for the week ahead.</p>
+          <div className="hero-actions mt-9 flex flex-wrap gap-3"><Link href="/signup" data-interactive className="inline-flex h-12 items-center gap-3 rounded-full bg-primary px-6 text-sm font-medium text-white hover:-translate-y-0.5 hover:bg-[#173d2e]">Find my path <ArrowRight className="size-4"/></Link><Link href="/demo" data-interactive className="inline-flex h-12 items-center rounded-full border px-6 text-sm font-medium hover:bg-[#f3eee6]">Read a sample report</Link></div>
+          <p className="hero-footnote mt-5 text-xs text-muted-foreground">Free to try · About 10 minutes · Your data stays yours</p>
         </div><Constellation />
       </div>
     </section>
@@ -39,7 +43,7 @@ export default function LandingPage() {
       ].map(([n,t,d],i)=><div key={n} data-reveal data-route-step className="relative pb-12 pl-10 last:pb-0"><span className={`absolute -left-[6px] top-1 size-3 rounded-full border border-primary ${i===2?"bg-primary":"bg-[#f3eee6]"}`}/><p className="font-mono text-xs text-primary">{n}</p><h3 className="mt-2 text-2xl">{t}</h3><p className="mt-2 max-w-lg leading-7 text-muted-foreground">{d}</p></div>)}</div></div></div>
     </section>
 
-    <section data-reveal className="px-6 py-24 md:py-32"><div className="mx-auto max-w-6xl"><p className="font-mono text-xs uppercase tracking-[.18em] text-primary">What waits at the end</p><div className="mt-5 grid gap-10 md:grid-cols-2"><h2 className="text-4xl leading-tight md:text-6xl">Not more options.<br/>A better sense of direction.</h2><div className="space-y-6">{["Your strengths, with evidence from your actual experience","Three career paths ranked by realistic fit","A seven-day plan designed to create momentum","CV rewrites that show what hiring teams need to see"].map(x=><p key={x} className="flex gap-4 border-b pb-5 text-base"><Check className="mt-1 size-4 shrink-0 text-primary"/>{x}</p>)}</div></div></div></section>
+    <section id="destination" data-reveal className="px-6 py-24 md:py-32"><div className="mx-auto max-w-6xl"><p className="font-mono text-xs uppercase tracking-[.18em] text-primary">What waits at the end</p><div className="mt-5 grid gap-10 md:grid-cols-2"><h2 className="text-4xl leading-tight md:text-6xl">Not more options.<br/>A better sense of direction.</h2><div className="space-y-6">{["Your strengths, with evidence from your actual experience","Three career paths ranked by realistic fit","A seven-day plan designed to create momentum","CV rewrites that show what hiring teams need to see"].map(x=><p key={x} className="flex gap-4 border-b pb-5 text-base"><Check className="mt-1 size-4 shrink-0 text-primary"/>{x}</p>)}</div></div></div></section>
     <section data-reveal className="bg-primary px-6 py-20 text-[#faf7f2]"><div className="mx-auto flex max-w-5xl flex-col items-start justify-between gap-8 md:flex-row md:items-center"><h2 className="max-w-2xl text-4xl leading-tight md:text-5xl">You don’t need the whole journey figured out.</h2><Link href="/signup" data-interactive className="shrink-0 rounded-full bg-[#faf7f2] px-6 py-3 text-sm font-medium text-primary">Take the first step →</Link></div></section>
   </div>;
 }
