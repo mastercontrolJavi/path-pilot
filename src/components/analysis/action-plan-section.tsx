@@ -1,5 +1,4 @@
 import type { AnalysisResult } from "@/lib/schemas";
-import { CalendarCheck } from "lucide-react";
 
 export function ActionPlanSection({
   steps,
@@ -7,22 +6,17 @@ export function ActionPlanSection({
   steps: AnalysisResult["action_plan"];
 }) {
   return (
-    <section>
-      <div className="flex items-center gap-2 mb-4">
-        <CalendarCheck className="w-4 h-4 text-foreground/70" />
-        <h2 className="text-lg font-semibold tracking-tight">
-          Your 7-day action plan
-        </h2>
-      </div>
-      <div className="space-y-3">
+    <section data-reveal>
+      <p className="font-mono text-xs uppercase tracking-[.18em] text-primary">Seven waypoints</p><h2 className="mb-8 mt-3 text-4xl">Your route for the next seven days</h2>
+      <div className="relative space-y-0 border-l border-primary/25 ml-4">
         {steps.map((step) => (
           <div
             key={step.step}
-            className="p-4 rounded-2xl bg-white border border-border/50 flex items-start gap-4"
+            data-reveal className="relative flex items-start gap-5 pb-9 pl-9 last:pb-0"
           >
-            <div className="w-8 h-8 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center shrink-0">
-              <span className="text-xs font-semibold text-primary">
-                {step.step}
+            <div className="absolute -left-4 top-0 grid size-8 place-items-center rounded-full border border-primary bg-[#faf7f2]">
+              <span className="font-mono text-[10px] text-primary">
+                {String(step.step).padStart(2,"0")}
               </span>
             </div>
             <div className="flex-1 min-w-0">

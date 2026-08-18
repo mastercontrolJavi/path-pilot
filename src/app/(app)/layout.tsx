@@ -25,8 +25,8 @@ export default async function AppLayout({
     user.user_metadata?.full_name || user.email?.split("@")[0] || "User";
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAFAFA]">
-      <header className="border-b border-border/50 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="border-b bg-[#faf7f2]/90 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/dashboard" className="flex items-center">
@@ -37,13 +37,13 @@ export default async function AppLayout({
                 href="/dashboard"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-lg hover:bg-accent transition-colors"
               >
-                Dashboard
+                Journey log
               </Link>
               <Link
                 href="/new"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-lg hover:bg-accent transition-colors"
               >
-                New Analysis
+                New journey
               </Link>
             </nav>
           </div>
@@ -57,7 +57,7 @@ export default async function AppLayout({
         </div>
       </header>
 
-      <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
+      <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-12">
         {children}
       </main>
     </div>

@@ -32,7 +32,7 @@ export function PathPilotLogo({ className }: { className?: string }) {
       <text
         x="56"
         y="19"
-        fontFamily="ui-sans-serif, system-ui, sans-serif"
+        fontFamily="var(--font-general), sans-serif"
         fontSize="14"
         fontWeight="600"
         fill="currentColor"
@@ -41,7 +41,7 @@ export function PathPilotLogo({ className }: { className?: string }) {
       <text
         x="86"
         y="19"
-        fontFamily="ui-sans-serif, system-ui, sans-serif"
+        fontFamily="var(--font-general), sans-serif"
         fontSize="14"
         fontWeight="300"
         fill="currentColor"
