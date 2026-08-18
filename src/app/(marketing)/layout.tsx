@@ -14,7 +14,7 @@ export default async function MarketingLayout({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border/50 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b bg-[#faf7f2]/90 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center">
             <PathPilotLogo className="text-foreground" />
@@ -49,7 +49,7 @@ export default async function MarketingLayout({
 
       <main className="flex-1">{children}</main>
 
-      <footer className="border-t border-border/50 bg-white">
+      <footer className="border-t bg-[#f3eee6]">
         <div className="max-w-6xl mx-auto px-6 py-10">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-8">
             <div className="max-w-sm">

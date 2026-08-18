@@ -1,191 +1,42 @@
 import Link from "next/link";
-import {
-  FileText,
-  MessageSquare,
-  Compass,
-  Sparkles,
-  Target,
-  CalendarCheck,
-} from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
-const steps = [
-  {
-    icon: FileText,
-    title: "Upload your CV",
-    description:
-      "Drop in your PDF or paste your resume text. We read between the lines to find patterns you might have missed.",
-  },
-  {
-    icon: MessageSquare,
-    title: "Answer 10 questions",
-    description:
-      "Quick, thoughtful questions about what you want, need, and care about. Takes about 5 minutes.",
-  },
-  {
-    icon: Compass,
-    title: "Get your paths",
-    description:
-      "Three realistic career paths, your real strengths with evidence, and a 7-day action plan.",
-  },
-];
-
-const valueProps = [
-  {
-    icon: Sparkles,
-    title: "Discover your real strengths",
-    description:
-      "Not generic traits. We identify what you're actually good at based on evidence from your experience.",
-  },
-  {
-    icon: Target,
-    title: "Find paths that actually fit",
-    description:
-      "Exactly 3 realistic career paths tailored to your background, not 100 random listings.",
-  },
-  {
-    icon: CalendarCheck,
-    title: "Get a plan for this week",
-    description:
-      "A concrete 7-day action plan so you know exactly what to do next. No more paralysis.",
-  },
-];
-
-const socialProofItems = [
-  "3 career paths",
-  "Top strengths with evidence",
-  "7-day action plan",
-  "CV rewrites",
-];
+function Constellation() {
+  return <div className="relative mx-auto aspect-[4/3] max-w-[620px]" aria-hidden="true">
+    <svg viewBox="0 0 620 460" className="h-full w-full overflow-visible">
+      <path d="M35 355 C115 360 95 258 180 278 S265 195 335 220 S410 118 486 145 S540 82 580 58" fill="none" stroke="#1f4b3a" strokeWidth="2" strokeDasharray="3 8" />
+      {[[35,355],[112,325],[180,278],[258,246],[335,220],[410,161],[486,145],[540,92]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r={i<4?4:5} fill={i<3?"#faf7f2":"#1f4b3a"} stroke="#1f4b3a" strokeWidth="2"/>)}
+      <g transform="translate(580 58)" fill="#1f4b3a"><path d="M0-24 5-6 24 0 5 6 0 24-5 6-24 0-5-6Z"/><circle r="9" fill="#faf7f2"/><circle r="5"/></g>
+      <circle cx="72" cy="96" r="2" fill="#6b6459"/><circle cx="280" cy="85" r="3" fill="#6b6459"/><circle cx="475" cy="330" r="2" fill="#6b6459"/>
+    </svg>
+    <p className="absolute bottom-4 left-12 font-mono text-[10px] uppercase tracking-[.22em] text-muted-foreground">Your experience</p>
+    <p className="absolute right-0 top-3 font-mono text-[10px] uppercase tracking-[.22em] text-primary">A clear direction</p>
+  </div>;
+}
 
 export default function LandingPage() {
-  return (
-    <div className="flex flex-col">
-      {/* Hero */}
-      <section className="min-h-[85vh] flex items-center justify-center px-6 bg-white">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border text-xs font-mono text-muted-foreground mb-8">
-            AI-powered · Free to try · Takes 10 minutes
-          </div>
+  return <div>
+    <section className="relative overflow-hidden px-6 pb-24 pt-20 md:pb-32 md:pt-28">
+      <div className="mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-[1fr_.9fr]">
+        <div>
+          <p className="mb-7 font-mono text-xs uppercase tracking-[.18em] text-primary">Career direction, made personal</p>
+          <h1 className="max-w-3xl text-6xl leading-[.98] tracking-[-.045em] md:text-7xl lg:text-[88px]">The next step is closer than it feels.</h1>
+          <p className="mt-7 max-w-xl text-lg leading-8 text-muted-foreground">PathPilot reads the story already inside your CV, then turns it into three realistic career paths and one calm plan for the week ahead.</p>
+          <div className="mt-9 flex flex-wrap gap-3"><Link href="/signup" className="inline-flex h-12 items-center gap-3 rounded-full bg-primary px-6 text-sm font-medium text-white hover:-translate-y-0.5 hover:bg-[#173d2e]">Find my path <ArrowRight className="size-4"/></Link><Link href="/demo" className="inline-flex h-12 items-center rounded-full border px-6 text-sm font-medium hover:bg-[#f3eee6]">Read a sample report</Link></div>
+          <p className="mt-5 text-xs text-muted-foreground">Free to try · About 10 minutes · Your data stays yours</p>
+        </div><Constellation />
+      </div>
+    </section>
 
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.05] mb-5">
-            Find your next
-            <br />
-            career move.
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed font-normal">
-            Upload your CV. Answer 10 questions. Get 3 realistic paths and a
-            7-day plan, powered by AI.
-          </p>
+    <section id="how" className="border-y bg-[#f3eee6] px-6 py-24">
+      <div className="mx-auto max-w-6xl"><div className="grid gap-12 md:grid-cols-[.8fr_1.2fr]"><div><p className="font-mono text-xs uppercase tracking-[.18em] text-primary">The route</p><h2 className="mt-4 text-4xl leading-tight md:text-5xl">From uncertainty to a useful next move.</h2></div><div className="relative space-y-0 border-l border-primary/25">{[
+        ["01","Bring what you have","Upload your CV or paste the text. No polishing required."],
+        ["02","Add the missing context","Ten straightforward questions about how you want to work."],
+        ["03","Arrive at a plan","Get evidence-backed strengths, three fitting routes and seven waypoints."],
+      ].map(([n,t,d],i)=><div key={n} className="relative pb-12 pl-10 last:pb-0"><span className={`absolute -left-[6px] top-1 size-3 rounded-full border border-primary ${i===2?"bg-primary":"bg-[#f3eee6]"}`}/><p className="font-mono text-xs text-primary">{n}</p><h3 className="mt-2 text-2xl">{t}</h3><p className="mt-2 max-w-lg leading-7 text-muted-foreground">{d}</p></div>)}</div></div></div>
+    </section>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0F0F0F] text-white font-medium text-base hover:bg-black/80 transition-colors shadow-sm"
-            >
-              Get started free →
-            </Link>
-            <Link
-              href="/demo"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border bg-white text-foreground font-medium text-base hover:bg-accent transition-colors"
-            >
-              See a sample analysis
-            </Link>
-          </div>
-
-          {/* Social proof bar */}
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-            {socialProofItems.map((item, i) => (
-              <span key={item} className="flex items-center gap-4">
-                <span className="text-sm text-muted-foreground">{item}</span>
-                {i < socialProofItems.length - 1 && (
-                  <span className="text-muted-foreground/30 text-xs">·</span>
-                )}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-24 px-6 bg-[#0F0F0F] text-white relative overflow-hidden">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-center mb-16 text-white">
-            How PathPilot works
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {steps.map((step, i) => (
-              <div
-                key={step.title}
-                className="relative border border-white/10 rounded-2xl p-8 overflow-hidden"
-              >
-                {/* Large step number behind */}
-                <span
-                  className="absolute -top-4 -left-2 text-[120px] font-bold text-white leading-none select-none pointer-events-none"
-                  style={{ opacity: 0.06 }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-
-                <div className="relative">
-                  <div className="w-10 h-10 rounded-xl border border-white/20 flex items-center justify-center mb-5">
-                    <step.icon className="w-5 h-5 text-white/80" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-white mb-2">
-                    {step.title}
-                  </h3>
-                  <p className="text-sm text-white/50 leading-relaxed">
-                    {step.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Value Props */}
-      <section className="py-24 px-6 bg-white">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-center mb-16">
-            What you&apos;ll get
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {valueProps.map((prop) => (
-              <div
-                key={prop.title}
-                className="p-6 rounded-2xl bg-white border border-border hover:shadow-md transition-shadow duration-200"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[#0F0F0F] flex items-center justify-center mb-4">
-                  <prop.icon className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-base font-semibold mb-2">{prop.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {prop.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Bottom CTA */}
-      <section className="py-24 px-6 bg-[#0F0F0F]">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white">
-            Stop guessing. Start moving.
-          </h2>
-          <p className="text-white/50 mb-10 text-lg">
-            10 minutes from now you&apos;ll have a clearer picture of where to
-            go next.
-          </p>
-          <Link
-            href="/signup"
-            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-white text-[#0F0F0F] font-medium text-base hover:bg-white/90 transition-colors shadow-sm"
-          >
-            Get started - it&apos;s free
-          </Link>
-        </div>
-      </section>
-    </div>
-  );
+    <section className="px-6 py-24 md:py-32"><div className="mx-auto max-w-6xl"><p className="font-mono text-xs uppercase tracking-[.18em] text-primary">What waits at the end</p><div className="mt-5 grid gap-10 md:grid-cols-2"><h2 className="text-4xl leading-tight md:text-6xl">Not more options.<br/>A better sense of direction.</h2><div className="space-y-6">{["Your strengths, with evidence from your actual experience","Three career paths ranked by realistic fit","A seven-day plan designed to create momentum","CV rewrites that show what hiring teams need to see"].map(x=><p key={x} className="flex gap-4 border-b pb-5 text-base"><Check className="mt-1 size-4 shrink-0 text-primary"/>{x}</p>)}</div></div></div></section>
+    <section className="bg-primary px-6 py-20 text-[#faf7f2]"><div className="mx-auto flex max-w-5xl flex-col items-start justify-between gap-8 md:flex-row md:items-center"><h2 className="max-w-2xl text-4xl leading-tight md:text-5xl">You don’t need the whole journey figured out.</h2><Link href="/signup" className="shrink-0 rounded-full bg-[#faf7f2] px-6 py-3 text-sm font-medium text-primary">Take the first step →</Link></div></section>
+  </div>;
 }
