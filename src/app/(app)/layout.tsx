@@ -27,7 +27,7 @@ export default async function AppLayout({
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="border-b bg-[#faf7f2]/90 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/dashboard" className="flex items-center">
               <PathPilotLogo className="text-foreground" />
@@ -57,9 +57,26 @@ export default async function AppLayout({
         </div>
       </header>
 
-      <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-12">
+      <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-8 pb-24 sm:px-6 sm:py-12 sm:pb-12">
         {children}
       </main>
+      <nav
+        aria-label="App navigation"
+        className="mobile-safe-bottom fixed inset-x-0 bottom-0 z-50 grid grid-cols-2 border-t bg-[#faf7f2]/95 px-3 pt-2 backdrop-blur-md sm:hidden"
+      >
+        <Link
+          href="/dashboard"
+          className="flex min-h-12 items-center justify-center rounded-xl text-sm font-medium text-muted-foreground active:bg-accent"
+        >
+          Journey log
+        </Link>
+        <Link
+          href="/new"
+          className="flex min-h-12 items-center justify-center rounded-xl bg-primary text-sm font-medium text-white"
+        >
+          New journey
+        </Link>
+      </nav>
     </div>
   );
 }
