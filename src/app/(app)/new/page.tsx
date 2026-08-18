@@ -13,7 +13,6 @@ import { QUESTIONS } from "@/lib/constants";
 import { questionnaireSchema } from "@/lib/schemas";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Progress } from "@/components/ui/progress";
 import {
   Upload,
   FileText,
@@ -61,27 +60,13 @@ export default function NewAnalysisPage() {
   });
 
   const formValues = watch();
-  const progress = ((currentStep + 1) / TOTAL_STEPS) * 100;
 
   const isCvValid = useCallback(() => {
     if (cvMode === "upload") return cvFile !== null;
     return cvText.trim().length >= 50;
   }, [cvMode, cvFile, cvText]);
 
-  const isQuestionValid = useCallback(
-    (questionIndex: number) => {
-      const question = QUESTIONS[questionIndex];
-      const value = formValues[question.fieldName as keyof WizardFormData];
 
-      if (!question.required) return true;
-
-      if (question.type === "multi-select") {
-        return Array.isArray(value) && value.length > 0;
-      }
-      return typeof value === "string" && value.trim().length >= 2;
-    },
-    [formValues]
-  );
 
   async function handleNext() {
     if (currentStep === 0) {
@@ -190,18 +175,13 @@ export default function NewAnalysisPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-3xl mx-auto">
       {/* Progress */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-muted-foreground">
-            Step {currentStep + 1} of {TOTAL_STEPS}
-          </span>
-          <span className="text-sm text-muted-foreground">
-            {Math.round(progress)}%
-          </span>
+      <div className="mb-14">
+        <div className="mb-4 flex items-center justify-between font-mono text-[10px] uppercase tracking-[.16em] text-muted-foreground"><span>Your path</span><span>Step {currentStep + 1} of {TOTAL_STEPS}</span></div>
+        <div className="relative flex items-center justify-between px-1"><span className="absolute left-2 right-2 top-1/2 h-px bg-border" />
+          {Array.from({length:TOTAL_STEPS},(_,i)=><span key={i} className={`relative z-10 size-3 rounded-full border ${i<currentStep?"border-primary bg-primary":i===currentStep?"border-primary bg-[#faf7f2] [animation:pulse-star_1.8s_ease-in-out_infinite]":"border-border bg-[#faf7f2]"}`}>{i<currentStep&&<Check className="absolute -left-0.5 -top-0.5 size-4 text-primary"/>}</span>)}
         </div>
-        <Progress value={progress} className="h-1.5" />
       </div>
 
       {/* Steps */}
@@ -209,10 +189,7 @@ export default function NewAnalysisPage() {
         <AnimatePresence mode="wait">
           <motion.div
             key={currentStep}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.18 }}
           >
             {currentStep === 0 && (
               <StepCV
@@ -234,7 +211,6 @@ export default function NewAnalysisPage() {
                 question={QUESTIONS[currentStep - 1]}
                 control={control}
                 errors={errors}
-                formValues={formValues}
               />
             )}
 
@@ -251,7 +227,7 @@ export default function NewAnalysisPage() {
         </AnimatePresence>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between mt-8 pt-6 border-t border-border/50">
+        <div className="flex items-center justify-between mt-8 pt-6 border-t">
           <Button
             type="button"
             variant="ghost"
@@ -320,8 +296,8 @@ function StepCV({
   onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-border/50 p-8">
-      <h2 className="text-xl font-semibold tracking-tight mb-1">
+    <div className="py-4 md:px-10">
+      <h2 className="font-display text-3xl md:text-4xl leading-tight mb-2">
         Upload your CV
       </h2>
       <p className="text-sm text-muted-foreground mb-6">
@@ -366,13 +342,13 @@ function StepCV({
       {cvMode === "upload" ? (
         <div>
           {cvFile ? (
-            <div className="flex items-center gap-3 p-4 rounded-xl bg-green-50 border border-green-200">
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-primary/5 border border-primary/20">
               <FileText className="w-5 h-5 text-green-600 shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-green-800 truncate">
+                <p className="text-sm font-medium text-primary truncate">
                   {cvFile.name}
                 </p>
-                <p className="text-xs text-green-600">
+                <p className="text-xs text-primary/70">
                   {(cvFile.size / 1024).toFixed(0)} KB
                 </p>
               </div>
@@ -438,19 +414,17 @@ function StepQuestion({
   question,
   control,
   errors,
-  formValues,
 }: {
   question: (typeof QUESTIONS)[number];
   control: ReturnType<typeof useForm<WizardFormData>>["control"];
   errors: ReturnType<typeof useForm<WizardFormData>>["formState"]["errors"];
-  formValues: WizardFormData;
 }) {
   const fieldName = question.fieldName as keyof WizardFormData;
   const error = errors[fieldName];
 
   return (
-    <div className="bg-white rounded-2xl border border-border/50 p-8">
-      <h2 className="text-xl font-semibold tracking-tight mb-1">
+    <div className="min-h-[360px] py-4 md:px-10">
+      <h2 className="font-display text-3xl md:text-4xl leading-tight mb-3">
         {question.label}
       </h2>
       <p className="text-sm text-muted-foreground mb-6">
@@ -488,7 +462,7 @@ function StepQuestion({
                         ? "bg-primary text-primary-foreground border-primary"
                         : atMax
                           ? "bg-accent/50 text-muted-foreground/50 border-border/30 cursor-not-allowed"
-                          : "bg-white text-foreground border-border/50 hover:border-border"
+                        : "bg-[#faf7f2] text-foreground border-border hover:border-primary"
                     }`}
                   >
                     {selected && <Check className="w-3.5 h-3.5" />}
@@ -541,8 +515,8 @@ function StepReview({
   isSubmitting: boolean;
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-border/50 p-8">
-      <h2 className="text-xl font-semibold tracking-tight mb-1">
+    <div className="py-4 md:px-10">
+      <h2 className="font-display text-3xl md:text-4xl leading-tight mb-2">
         Review & submit
       </h2>
       <p className="text-sm text-muted-foreground mb-6">

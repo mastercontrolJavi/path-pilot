@@ -7,7 +7,7 @@ export function CvRewritesSection({
   rewrites: AnalysisResult["cv_rewrites"];
 }) {
   return (
-    <section>
+    <section data-reveal>
       <div className="flex items-center gap-2 mb-4">
         <PenLine className="w-4 h-4 text-foreground/70" />
         <h2 className="text-lg font-semibold tracking-tight">
@@ -18,7 +18,7 @@ export function CvRewritesSection({
         {rewrites.map((rewrite, i) => (
           <div
             key={i}
-            className="p-5 rounded-2xl bg-white border border-border/50"
+            data-reveal data-interactive className="p-5 rounded-2xl bg-white border border-border/50"
           >
             <div className="grid md:grid-cols-[1fr_auto_1fr] gap-4 items-start mb-3">
               <div className="p-3 rounded-xl bg-red-50 border border-red-100">

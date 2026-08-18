@@ -61,7 +61,7 @@ export default function SignupPage() {
 
   if (isSuccess) {
     return (
-      <div className="bg-white rounded-2xl border border-border/50 p-8 shadow-sm text-center">
+      <div data-reveal="fade" className="border-t border-primary/30 pt-8 text-center">
         <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-4">
           <CheckCircle2 className="w-6 h-6 text-green-600" />
         </div>
@@ -83,9 +83,9 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-border/50 p-8 shadow-sm">
+    <div data-reveal="fade" className="border-t border-primary/30 pt-8">
       <div className="mb-6">
-        <h1 className="text-xl font-semibold tracking-tight mb-1">
+        <h1 className="font-display text-3xl mb-2">
           Create your account
         </h1>
         <p className="text-sm text-muted-foreground">
@@ -97,6 +97,7 @@ export default function SignupPage() {
         <div className="space-y-2">
           <Label htmlFor="fullName">Full name</Label>
           <Input
+            className="h-11 rounded-xl bg-[#f3eee6]/35 px-3"
             id="fullName"
             type="text"
             placeholder="Jane Smith"
@@ -113,6 +114,7 @@ export default function SignupPage() {
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
+            className="h-11 rounded-xl bg-[#f3eee6]/35 px-3"
             id="email"
             type="email"
             placeholder="you@example.com"
@@ -127,6 +129,7 @@ export default function SignupPage() {
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
           <Input
+            className="h-11 rounded-xl bg-[#f3eee6]/35 px-3"
             id="password"
             type="password"
             placeholder="At least 6 characters"
@@ -142,7 +145,7 @@ export default function SignupPage() {
 
         <Button
           type="submit"
-          className="w-full rounded-xl"
+          className="h-11 w-full rounded-xl"
           disabled={isLoading}
         >
           {isLoading ? (

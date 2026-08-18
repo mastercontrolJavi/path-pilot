@@ -1,19 +1,9 @@
-import { Sparkles } from "lucide-react";
-
 export function SummaryHeader({ summary }: { summary: string }) {
   return (
-    <div className="p-6 md:p-8 rounded-2xl bg-white border border-border/50">
-      <div className="flex items-start gap-4">
-        <div className="w-10 h-10 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center shrink-0">
-          <Sparkles className="w-5 h-5 text-primary" />
-        </div>
-        <div>
-          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">
-            Your career snapshot
-          </h2>
-          <p className="text-base leading-relaxed">{summary}</p>
-        </div>
-      </div>
+    <div data-reveal className="report-section border-b border-primary/25 pb-12 pt-4">
+      <p className="mb-5 font-mono text-xs uppercase tracking-[.18em] text-primary">You’ve arrived · Your career report</p>
+      <h1 className="max-w-4xl text-4xl leading-tight md:text-6xl">A clearer view of where your experience can take you.</h1>
+      <p className="mt-7 max-w-4xl text-lg leading-8 text-muted-foreground">{summary}</p>
     </div>
   );
 }
