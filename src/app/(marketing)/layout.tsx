@@ -15,7 +15,7 @@ export default async function MarketingLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <header className="group/site-header sticky top-0 z-50 border-b bg-[#faf7f2]/88 backdrop-blur-md">
-        <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto] items-center px-4 sm:h-[72px] sm:px-6 md:grid-cols-[1fr_auto_1fr]">
+        <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto] items-center px-4 sm:h-[72px] sm:px-6">
           <Link
             href="/"
             className="flex w-fit items-center"
@@ -23,22 +23,6 @@ export default async function MarketingLayout({
           >
             <PathPilotLogo className="text-foreground" />
           </Link>
-          <nav
-            aria-label="Main navigation"
-            className="hidden items-center gap-7 md:flex"
-          >
-            <Link href="/#how" className="header-route-link">
-              How it works
-            </Link>
-            <span className="size-1 rounded-full bg-primary/30" />
-            <Link href="/#destination" className="header-route-link">
-              What you get
-            </Link>
-            <span className="size-1 rounded-full bg-primary" />
-            <Link href="/demo" className="header-route-link">
-              Sample report
-            </Link>
-          </nav>
           <nav
             aria-label="Account navigation"
             className="flex items-center justify-end gap-2 sm:gap-4"
@@ -68,29 +52,6 @@ export default async function MarketingLayout({
             )}
           </nav>
         </div>
-        <nav
-          aria-label="Mobile navigation"
-          className="flex h-11 items-center justify-center gap-6 overflow-x-auto border-t px-4 md:hidden"
-        >
-          <Link
-            href="/#how"
-            className="inline-flex h-11 shrink-0 items-center text-xs font-medium text-muted-foreground"
-          >
-            How it works
-          </Link>
-          <Link
-            href="/#destination"
-            className="inline-flex h-11 shrink-0 items-center text-xs font-medium text-muted-foreground"
-          >
-            What you get
-          </Link>
-          <Link
-            href="/demo"
-            className="inline-flex h-11 shrink-0 items-center text-xs font-medium text-muted-foreground"
-          >
-            Sample report
-          </Link>
-        </nav>
       </header>
 
       <main className="flex-1">{children}</main>
