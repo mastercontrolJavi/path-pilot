@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v4";
@@ -9,8 +10,9 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
-import { Loader2, CheckCircle2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 const signupSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
@@ -21,8 +23,8 @@ const signupSchema = z.object({
 type SignupFormData = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const {
     register,
@@ -51,35 +53,13 @@ export default function SignupPage() {
         return;
       }
 
-      setIsSuccess(true);
+      router.push("/dashboard");
+      router.refresh();
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
-  }
-
-  if (isSuccess) {
-    return (
-      <div data-reveal="fade" className="border-t border-primary/30 pt-8 text-center">
-        <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-4">
-          <CheckCircle2 className="w-6 h-6 text-green-600" />
-        </div>
-        <h1 className="text-xl font-semibold tracking-tight mb-2">
-          Check your email
-        </h1>
-        <p className="text-sm text-muted-foreground mb-6">
-          We sent you a confirmation link. Click it to activate your account and
-          get started.
-        </p>
-        <Link
-          href="/login"
-          className="text-sm font-medium text-foreground hover:underline"
-        >
-          Back to sign in
-        </Link>
-      </div>
-    );
   }
 
   return (
@@ -128,10 +108,9 @@ export default function SignupPage() {
 
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
-          <Input
+          <PasswordInput
             className="h-11 rounded-xl bg-[#f3eee6]/35 px-3"
             id="password"
-            type="password"
             placeholder="At least 6 characters"
             autoComplete="new-password"
             {...register("password")}
