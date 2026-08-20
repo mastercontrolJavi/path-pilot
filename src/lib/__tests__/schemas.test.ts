@@ -7,6 +7,7 @@ import {
 
 describe("questionnaireSchema", () => {
   const validQuestionnaire = {
+    education_status: "Have a degree, not currently pursuing further education",
     preferred_work_style: ["Structured", "Analytical"],
     career_priorities: ["Growth", "Stability"],
     things_i_enjoy: "I enjoy organizing events and solving complex problems",
@@ -55,6 +56,54 @@ describe("questionnaireSchema", () => {
       salary_goal: undefined,
       industries_of_interest: undefined,
       hard_constraints: undefined,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("requires an education status selection", () => {
+    const result = questionnaireSchema.safeParse({
+      ...validQuestionnaire,
+      education_status: "",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("requires field of study and graduation timeframe when currently pursuing a degree", () => {
+    const result = questionnaireSchema.safeParse({
+      ...validQuestionnaire,
+      education_status: "Currently pursuing a degree (in progress)",
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const paths = result.error.issues.map((issue) => issue.path.join("."));
+      expect(paths).toContain("field_of_study");
+      expect(paths).toContain("expected_graduation");
+    }
+  });
+
+  it("accepts a currently-pursuing education status once follow-up fields are filled", () => {
+    const result = questionnaireSchema.safeParse({
+      ...validQuestionnaire,
+      education_status: "Currently pursuing a degree (in progress)",
+      field_of_study: "Computer Science",
+      expected_graduation: "Spring 2027",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("requires write-in text when education status is Other", () => {
+    const result = questionnaireSchema.safeParse({
+      ...validQuestionnaire,
+      education_status: "Other",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts an Other education status once the write-in text is filled", () => {
+    const result = questionnaireSchema.safeParse({
+      ...validQuestionnaire,
+      education_status: "Other",
+      education_status_other: "Trade school certification",
     });
     expect(result.success).toBe(true);
   });
@@ -230,6 +279,7 @@ describe("analyzeRequestSchema", () => {
     const result = analyzeRequestSchema.safeParse({
       cvText: "too short",
       questionnaire: {
+        education_status: "Some college, no degree",
         preferred_work_style: ["Structured"],
         career_priorities: ["Growth"],
         things_i_enjoy: "I enjoy organizing events",
