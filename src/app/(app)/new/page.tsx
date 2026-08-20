@@ -12,6 +12,7 @@ import { createClient } from "@/lib/supabase/client";
 import { QUESTIONS } from "@/lib/constants";
 import { questionnaireSchema } from "@/lib/schemas";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Upload,
@@ -26,7 +27,7 @@ import {
 
 type WizardFormData = z.infer<typeof questionnaireSchema>;
 
-const TOTAL_STEPS = QUESTIONS.length + 2; // CV + 10 questions + review
+const TOTAL_STEPS = QUESTIONS.length + 2; // CV + 11 questions + review
 
 export default function NewAnalysisPage() {
   const router = useRouter();
@@ -46,6 +47,10 @@ export default function NewAnalysisPage() {
   } = useForm<WizardFormData>({
     resolver: zodResolver(questionnaireSchema),
     defaultValues: {
+      education_status: "",
+      education_status_other: "",
+      field_of_study: "",
+      expected_graduation: "",
       preferred_work_style: [],
       career_priorities: [],
       things_i_enjoy: "",
@@ -79,7 +84,20 @@ export default function NewAnalysisPage() {
     } else if (currentStep >= 1 && currentStep <= QUESTIONS.length) {
       const question = QUESTIONS[currentStep - 1];
       const fieldName = question.fieldName as keyof WizardFormData;
-      const valid = await trigger(fieldName);
+      const fieldsToValidate: (keyof WizardFormData)[] = [fieldName];
+
+      if (fieldName === "education_status") {
+        if (formValues.education_status === "Other") {
+          fieldsToValidate.push("education_status_other");
+        } else if (
+          formValues.education_status ===
+          "Currently pursuing a degree (in progress)"
+        ) {
+          fieldsToValidate.push("field_of_study", "expected_graduation");
+        }
+      }
+
+      const valid = await trigger(fieldsToValidate);
       if (!valid) return;
     }
     setCurrentStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
@@ -496,6 +514,108 @@ function StepQuestion({
             </div>
           )}
         />
+      ) : question.type === "single-select" && question.options ? (
+        <Controller
+          name={fieldName as "education_status"}
+          control={control}
+          render={({ field }) => (
+            <>
+              <div className="flex flex-wrap gap-2">
+                {question.options!.map((option) => {
+                  const selected = field.value === option;
+
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => field.onChange(option)}
+                      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
+                        selected
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-[#faf7f2] text-foreground border-border hover:border-primary"
+                      }`}
+                    >
+                      {selected && <Check className="w-3.5 h-3.5" />}
+                      {option}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {fieldName === "education_status" && field.value === "Other" && (
+                <div className="mt-4">
+                  <Controller
+                    name="education_status_other"
+                    control={control}
+                    render={({ field: otherField }) => (
+                      <Input
+                        {...otherField}
+                        value={(otherField.value as string) || ""}
+                        placeholder={question.placeholder}
+                        className="rounded-xl"
+                      />
+                    )}
+                  />
+                  {errors.education_status_other && (
+                    <p className="text-xs text-destructive mt-2">
+                      {errors.education_status_other.message as string}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {fieldName === "education_status" &&
+                field.value === "Currently pursuing a degree (in progress)" && (
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                        Field of study
+                      </p>
+                      <Controller
+                        name="field_of_study"
+                        control={control}
+                        render={({ field: fosField }) => (
+                          <Input
+                            {...fosField}
+                            value={(fosField.value as string) || ""}
+                            placeholder="e.g., Computer Science"
+                            className="rounded-xl"
+                          />
+                        )}
+                      />
+                      {errors.field_of_study && (
+                        <p className="text-xs text-destructive mt-2">
+                          {errors.field_of_study.message as string}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                        Expected graduation
+                      </p>
+                      <Controller
+                        name="expected_graduation"
+                        control={control}
+                        render={({ field: gradField }) => (
+                          <Input
+                            {...gradField}
+                            value={(gradField.value as string) || ""}
+                            placeholder="e.g., Spring 2027"
+                            className="rounded-xl"
+                          />
+                        )}
+                      />
+                      {errors.expected_graduation && (
+                        <p className="text-xs text-destructive mt-2">
+                          {errors.expected_graduation.message as string}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+            </>
+          )}
+        />
       ) : (
         <Controller
           name={fieldName}
@@ -563,10 +683,26 @@ function StepReview({
         {/* Questionnaire summary */}
         {QUESTIONS.map((q) => {
           const value = formValues[q.fieldName as keyof WizardFormData];
-          const display = Array.isArray(value)
+          let display = Array.isArray(value)
             ? value.join(", ")
             : (value as string);
           if (!display) return null;
+
+          if (q.fieldName === "education_status") {
+            if (display === "Other" && formValues.education_status_other) {
+              display = `Other: ${formValues.education_status_other}`;
+            } else if (display === "Currently pursuing a degree (in progress)") {
+              const details = [
+                formValues.field_of_study &&
+                  `Field of study: ${formValues.field_of_study}`,
+                formValues.expected_graduation &&
+                  `Expected graduation: ${formValues.expected_graduation}`,
+              ]
+                .filter(Boolean)
+                .join(" · ");
+              if (details) display = `${display} (${details})`;
+            }
+          }
 
           return (
             <div key={q.id} className="p-4 rounded-xl bg-accent/50">

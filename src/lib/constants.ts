@@ -14,6 +14,22 @@ export interface QuestionDefinition {
 
 export const QUESTIONS: QuestionDefinition[] = [
   {
+    id: "q0",
+    fieldName: "education_status",
+    label: "Where are you at with school right now?",
+    description: "Pick the option that best describes where you're at.",
+    type: "single-select",
+    options: [
+      "Currently pursuing a degree (in progress)",
+      "Have a degree, not currently pursuing further education",
+      "Some college, no degree",
+      "No formal degree / self-taught",
+      "Other",
+    ],
+    placeholder: "e.g., Bootcamp graduate, professional certification, still deciding...",
+    required: true,
+  },
+  {
     id: "q1",
     fieldName: "preferred_work_style",
     label: "How do you prefer to work?",

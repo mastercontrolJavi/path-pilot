@@ -17,7 +17,7 @@ Rules:
 - Avoid generic traits like "hardworking", "motivated", "passionate"
 - Infer deeper strengths from evidence
 - Use the user's actual experience, patterns, and preferences
-- Consider constraints like location, preferences, dislikes, salary goals, and work style
+- Consider constraints like location, preferences, dislikes, salary goals, work style, and education/degree status
 - The user is overwhelmed; reduce cognitive load
 - Provide practical next actions for the next 7 days
 - Do not recommend fantasy careers disconnected from the user's background
@@ -32,12 +32,23 @@ export function buildAnalysisPrompt(
   cvText: string,
   questionnaire: QuestionnaireData
 ): string {
+  const educationStatus =
+    questionnaire.education_status === "Other"
+      ? `Other${questionnaire.education_status_other ? ` (${questionnaire.education_status_other})` : ""}`
+      : questionnaire.education_status;
+
+  const educationDetails =
+    questionnaire.education_status === "Currently pursuing a degree (in progress)"
+      ? ` — Field of study: ${questionnaire.field_of_study || "Not specified"}; Expected graduation: ${questionnaire.expected_graduation || "Not specified"}`
+      : "";
+
   return `## CV Content
 
 ${cvText}
 
 ## Questionnaire Responses
 
+**Education Status:** ${educationStatus}${educationDetails}
 **Preferred Work Style:** ${questionnaire.preferred_work_style.join(", ")}
 **Career Priorities:** ${questionnaire.career_priorities.join(", ")}
 **Things I Enjoy:** ${questionnaire.things_i_enjoy}
