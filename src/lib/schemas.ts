@@ -1,17 +1,38 @@
 import { z } from "zod/v4";
 
-export const questionnaireSchema = z.object({
-  preferred_work_style: z.array(z.string()).min(1, "Select at least one work style"),
-  career_priorities: z.array(z.string()).min(1, "Select at least one priority").max(3, "Select up to 3 priorities"),
-  things_i_enjoy: z.string().min(10, "Tell us a bit more about what you enjoy"),
-  things_i_dislike: z.string().min(10, "Tell us a bit more about what you dislike"),
-  past_experiences: z.string().min(10, "Briefly describe your past experiences"),
-  target_location: z.string().min(2, "Enter your target location"),
-  salary_goal: z.string().optional(),
-  biggest_current_problem: z.string().min(10, "Describe your biggest challenge"),
-  industries_of_interest: z.string().optional(),
-  hard_constraints: z.string().optional(),
-});
+export const questionnaireSchema = z
+  .object({
+    education_status: z.string().min(1, "Select where you're at with school"),
+    education_status_other: z.string().optional(),
+    field_of_study: z.string().optional(),
+    expected_graduation: z.string().optional(),
+    preferred_work_style: z.array(z.string()).min(1, "Select at least one work style"),
+    career_priorities: z.array(z.string()).min(1, "Select at least one priority").max(3, "Select up to 3 priorities"),
+    things_i_enjoy: z.string().min(10, "Tell us a bit more about what you enjoy"),
+    things_i_dislike: z.string().min(10, "Tell us a bit more about what you dislike"),
+    past_experiences: z.string().min(10, "Briefly describe your past experiences"),
+    target_location: z.string().min(2, "Enter your target location"),
+    salary_goal: z.string().optional(),
+    biggest_current_problem: z.string().min(10, "Describe your biggest challenge"),
+    industries_of_interest: z.string().optional(),
+    hard_constraints: z.string().optional(),
+  })
+  .refine(
+    (data) => data.education_status !== "Other" || !!data.education_status_other?.trim(),
+    { message: "Tell us more about your education status", path: ["education_status_other"] }
+  )
+  .refine(
+    (data) =>
+      data.education_status !== "Currently pursuing a degree (in progress)" ||
+      !!data.field_of_study?.trim(),
+    { message: "Enter your field of study", path: ["field_of_study"] }
+  )
+  .refine(
+    (data) =>
+      data.education_status !== "Currently pursuing a degree (in progress)" ||
+      !!data.expected_graduation?.trim(),
+    { message: "Enter your expected graduation timeframe", path: ["expected_graduation"] }
+  );
 
 export type QuestionnaireData = z.infer<typeof questionnaireSchema>;
 
