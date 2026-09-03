@@ -553,3 +553,124 @@ html[data-motion="ready"] [data-reveal="fade"][data-visible="true"] {
     transition: none !important;
   }
 }
+
+/* On hover or focus, a color flood sweeps across the button while the label
+   steps aside for one that points to the next move. The flood is a large
+   circle scaled *down* to invisible at rest (rather than a small one scaled
+   up) so its edge stays crisp at every size. */
+.cta {
+  --cta-flood: var(--primary);
+  --cta-ink-hover: #faf7f2;
+  --cta-focus: var(--primary);
+  --cta-ring: transparent;
+  box-shadow: inset 0 0 0 1px var(--cta-ring);
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+/* The two hero buttons swap appearances on hover: the solid one floods to the
+   paper colour, so it needs the outline's ring to keep its silhouette against
+   the equally pale page behind it. */
+.cta-solid {
+  --cta-flood: #faf7f2;
+  --cta-ink-hover: var(--primary);
+}
+.cta-solid:focus-visible {
+  --cta-ring: var(--primary);
+}
+.cta-inverse {
+  --cta-flood: #1c1917;
+  --cta-ink-hover: #faf7f2;
+  --cta-focus: #faf7f2;
+}
+.cta-flood {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 1.25rem;
+  margin: -16rem 0 0 -16rem;
+  height: 32rem;
+  width: 32rem;
+  border-radius: 999px;
+  background: var(--cta-flood);
+  opacity: 0;
+  transform: scale(0.015625);
+  transition:
+    transform 0.45s cubic-bezier(0.3, 0.7, 0.3, 1),
+    opacity 0.25s ease;
+}
+.cta-label,
+.cta-label-hover {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 0.3s ease;
+}
+.cta-label-hover {
+  position: absolute;
+  inset: 0;
+  justify-content: center;
+  opacity: 0;
+  transform: translateX(2.5rem);
+}
+.cta:focus-visible {
+  color: var(--cta-ink-hover);
+  outline: 2px solid var(--cta-focus);
+  outline-offset: 3px;
+}
+.cta-outline:focus-visible {
+  border-color: var(--primary);
+}
+.cta:focus-visible .cta-flood {
+  opacity: 1;
+  transform: scale(1);
+}
+.cta:focus-visible .cta-label {
+  opacity: 0;
+  transform: translateX(2.5rem);
+}
+.cta:focus-visible .cta-label-hover {
+  opacity: 1;
+  transform: none;
+}
+/* Pointer devices only — on touch, a tap would otherwise leave the button
+   stuck in its hovered state after navigation. */
+@media (hover: hover) {
+  .cta:hover {
+    color: var(--cta-ink-hover);
+    transform: translateY(-1px);
+  }
+  .cta-outline:hover {
+    border-color: var(--primary);
+  }
+  .cta-solid:hover {
+    --cta-ring: var(--primary);
+  }
+  .cta:hover .cta-flood {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .cta:hover .cta-label {
+    opacity: 0;
+    transform: translateX(2.5rem);
+  }
+  .cta:hover .cta-label-hover {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta,
+  .cta-flood,
+  .cta-label,
+  .cta-label-hover {
+    transition: none !important;
+  }
+  .cta:hover {
+    transform: none;
+  }
+}
