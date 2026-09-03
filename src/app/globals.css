@@ -554,10 +554,10 @@ html[data-motion="ready"] [data-reveal="fade"][data-visible="true"] {
   }
 }
 
-/* Calls to action carry the wayfinding metaphor: a single waypoint dot at rest
-   that floods the button on approach, while the label steps aside for one that
-   points to the next move. The flood is a large circle scaled *down* at rest
-   (rather than a small one scaled up) so its edge stays crisp at every size. */
+/* On hover or focus, a color flood sweeps across the button while the label
+   steps aside for one that points to the next move. The flood is a large
+   circle scaled *down* to invisible at rest (rather than a small one scaled
+   up) so its edge stays crisp at every size. */
 .cta {
   --cta-flood: var(--primary);
   --cta-ink-hover: #faf7f2;
@@ -595,19 +595,11 @@ html[data-motion="ready"] [data-reveal="fade"][data-visible="true"] {
   width: 32rem;
   border-radius: 999px;
   background: var(--cta-flood);
-  opacity: 0.5;
-  transform: scale(0.015625); /* 32rem * 0.015625 = the 8px resting dot */
+  opacity: 0;
+  transform: scale(0.015625);
   transition:
     transform 0.45s cubic-bezier(0.3, 0.7, 0.3, 1),
     opacity 0.25s ease;
-}
-/* Full-width buttons on small screens strand the resting dot far from its
-   label, and touch has no hover for it to promise — so the seed only shows
-   where the button hugs its text. The flood itself still works on hover. */
-@media (max-width: 639px), (hover: none) {
-  .cta-flood {
-    opacity: 0;
-  }
 }
 .cta-label,
 .cta-label-hover {
