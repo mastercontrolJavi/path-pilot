@@ -1,5 +1,6 @@
-import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
+
+import { CtaButton } from "@/components/ui/cta-button";
 
 function Constellation() {
   const route =
@@ -110,20 +111,12 @@ export default function LandingPage() {
               ahead.
             </p>
             <div className="hero-actions mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link
-                href="/signup"
-                data-interactive
-                className="inline-flex h-12 items-center justify-center gap-3 rounded-full bg-primary px-6 text-sm font-medium text-white hover:-translate-y-0.5 hover:bg-[#173d2e]"
-              >
-                Find my path <ArrowRight className="size-4" />
-              </Link>
-              <Link
-                href="/demo"
-                data-interactive
-                className="inline-flex h-12 items-center justify-center rounded-full border px-6 text-sm font-medium hover:bg-[#f3eee6]"
-              >
+              <CtaButton href="/signup" variant="solid">
+                Find my path
+              </CtaButton>
+              <CtaButton href="/demo" variant="outline">
                 Read a sample report
-              </Link>
+              </CtaButton>
             </div>
             <p className="hero-footnote mt-5 text-xs text-muted-foreground">
               Free to try · About 10 minutes · Your data stays yours
@@ -228,13 +221,13 @@ export default function LandingPage() {
           <h2 className="max-w-2xl text-4xl leading-tight md:text-5xl">
             You don’t need the whole journey figured out.
           </h2>
-          <Link
+          <CtaButton
             href="/signup"
-            data-interactive
-            className="w-fit rounded-full bg-[#faf7f2] px-6 py-3 text-sm font-medium text-primary md:justify-self-center"
+            variant="inverse"
+            className="w-fit md:justify-self-center"
           >
-            Take the first step →
-          </Link>
+            Take the first step
+          </CtaButton>
         </div>
       </section>
     </div>
