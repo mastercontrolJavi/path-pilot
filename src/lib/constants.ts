@@ -1,23 +1,35 @@
+import type { QuestionnaireData } from "./schemas";
+
 export type QuestionType = "single-select" | "multi-select" | "text";
 
 export interface QuestionDefinition {
   id: string;
-  fieldName: string;
+  /** Key in the stored questionnaire. Never rename: stored reports depend on it. */
+  fieldName: keyof QuestionnaireData;
   label: string;
+  /** Why we ask, in 15 words or fewer. */
   description: string;
+  /** Label on the wizard's path rail. */
+  short: string;
   type: QuestionType;
+  /** Multi-select options; the label is also the stored value. */
   options?: string[];
+  /** Single-select choices: stored value plus the label people see. */
+  choices?: { value: string; label: string }[];
   placeholder?: string;
   required: boolean;
   maxSelections?: number;
+  /** Text answers that need room (textarea) rather than a single line. */
+  multiline?: boolean;
 }
 
 export const QUESTIONS: QuestionDefinition[] = [
   {
     id: "q1",
     fieldName: "preferred_work_style",
-    label: "How do you prefer to work?",
-    description: "Select all that resonate with you.",
+    label: "How do you like to work?",
+    description: "Pick all that fit. We rule out roles that would drain you.",
+    short: "How you work",
     type: "multi-select",
     options: [
       "Structured",
@@ -34,8 +46,9 @@ export const QUESTIONS: QuestionDefinition[] = [
   {
     id: "q2",
     fieldName: "career_priorities",
-    label: "What matters most in your career?",
-    description: "Pick up to 3 priorities.",
+    label: "What matters most in your next role?",
+    description: "Pick up to three. Every route is weighed against them.",
+    short: "What matters",
     type: "multi-select",
     options: [
       "High income",
@@ -53,73 +66,100 @@ export const QUESTIONS: QuestionDefinition[] = [
   {
     id: "q3",
     fieldName: "things_i_enjoy",
-    label: "What do you genuinely enjoy doing?",
-    description: "Think about tasks, projects, or activities that energize you.",
+    label: "What work do you genuinely enjoy?",
+    description: "The tasks that give you energy point to roles that will.",
+    short: "What you enjoy",
     type: "text",
-    placeholder: "e.g., I love organizing events, solving puzzles, writing, analyzing data...",
+    multiline: true,
+    placeholder: "e.g. untangling messy processes, training new people, digging into the numbers",
     required: true,
   },
   {
     id: "q4",
     fieldName: "things_i_dislike",
-    label: "What do you want to avoid in a job?",
-    description: "Be honest about dealbreakers and energy drains.",
+    label: "What do you want to leave behind?",
+    description: "So we don't route you straight back into it.",
+    short: "What to avoid",
     type: "text",
-    placeholder: "e.g., Cold calling, repetitive data entry, working alone all day...",
+    multiline: true,
+    placeholder: "e.g. cold calling, night shifts, being the only one who fixes everything",
     required: true,
   },
   {
     id: "q5",
     fieldName: "past_experiences",
-    label: "Summarize your key experiences",
-    description: "Internships, projects, leadership roles, freelance work, anything relevant.",
+    label: "What experience should we know about?",
+    description: "Anything your CV undersells: projects, side work, responsibilities you took on.",
+    short: "Experience",
     type: "text",
-    placeholder: "e.g., Marketing intern at a startup, led a university club, freelance design work...",
+    multiline: true,
+    placeholder: "e.g. onboarded 14 suppliers, trained every new hire, built our weekly reporting",
+    required: true,
+  },
+  {
+    id: "q_education",
+    fieldName: "education_status",
+    label: "What's your education status?",
+    description: "Some routes expect a degree; many hire on proven skill.",
+    short: "Education",
+    type: "single-select",
+    choices: [
+      { value: "enrolled", label: "Currently studying" },
+      { value: "graduated", label: "Graduated (degree or diploma)" },
+      { value: "no_degree", label: "No degree" },
+    ],
     required: true,
   },
   {
     id: "q6",
     fieldName: "target_location",
     label: "Where do you want to work?",
-    description: "City, country, or remote preference.",
+    description: "Pay and openings depend on the place.",
+    short: "Location",
     type: "text",
-    placeholder: "e.g., London, Remote, US East Coast, Hybrid in NYC...",
+    placeholder: "e.g. Remote US, London, hybrid in Austin",
     required: true,
   },
   {
     id: "q7",
     fieldName: "salary_goal",
-    label: "What's your salary expectation?",
-    description: "Optional but helps us recommend realistic paths.",
+    label: "What do you want to earn?",
+    description: "Optional. Helps us flag routes that would pay too little.",
+    short: "Pay goal",
     type: "text",
-    placeholder: "e.g., $50-60k, \u00a330k+, Open to lower for the right role...",
+    placeholder: "e.g. $85k+, £45k, open for the right role",
     required: false,
   },
   {
     id: "q8",
     fieldName: "biggest_current_problem",
-    label: "What's your biggest career frustration right now?",
-    description: "What made you try this tool today?",
+    label: "What's making this hard right now?",
+    description: "Your report starts from the problem you actually have.",
+    short: "What's hard",
     type: "text",
-    placeholder: "e.g., I don't know what roles fit me, I'm applying everywhere and hearing nothing...",
+    multiline: true,
+    placeholder: "e.g. I know I want out, but I can't tell where my experience transfers",
     required: true,
   },
   {
     id: "q9",
     fieldName: "industries_of_interest",
     label: "Any industries you're drawn to?",
-    description: "Optional. List industries or sectors that interest you.",
+    description: "Optional. We lean toward these when routes are close.",
+    short: "Industries",
     type: "text",
-    placeholder: "e.g., Tech, Healthcare, Finance, Education, Sustainability...",
+    placeholder: "e.g. software, healthcare, climate, education",
     required: false,
   },
   {
     id: "q10",
     fieldName: "hard_constraints",
-    label: "Any hard constraints we should know about?",
-    description: "Optional. Visa requirements, location limits, things you absolutely can't do.",
+    label: "Anything we must work around?",
+    description: "Optional. Visas, location limits, hours, or roles you won't consider.",
+    short: "Constraints",
     type: "text",
-    placeholder: "e.g., Need visa sponsorship, can't relocate, no sales roles...",
+    multiline: true,
+    placeholder: "e.g. need visa sponsorship, can't relocate, no sales roles",
     required: false,
   },
 ];

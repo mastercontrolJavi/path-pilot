@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/supabase/user";
 import { LogoutButton } from "@/components/logout-button";
 import { PathPilotLogo } from "@/components/ui/logo";
 import { Toaster } from "@/components/ui/sonner";
@@ -11,10 +11,8 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Shared with the page (one Supabase call per request).
+  const user = await getCurrentUser();
 
   if (!user) {
     const h = await headers();

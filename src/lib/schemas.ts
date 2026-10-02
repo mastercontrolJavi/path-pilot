@@ -1,14 +1,20 @@
 import { z } from "zod/v4";
+import { QUESTIONNAIRE_RULES } from "./questionnaire-rules";
+
+const R = QUESTIONNAIRE_RULES;
 
 export const questionnaireSchema = z.object({
-  preferred_work_style: z.array(z.string()).min(1, "Select at least one work style"),
-  career_priorities: z.array(z.string()).min(1, "Select at least one priority").max(3, "Select up to 3 priorities"),
-  things_i_enjoy: z.string().min(10, "Tell us a bit more about what you enjoy"),
-  things_i_dislike: z.string().min(10, "Tell us a bit more about what you dislike"),
-  past_experiences: z.string().min(10, "Briefly describe your past experiences"),
-  target_location: z.string().min(2, "Enter your target location"),
+  preferred_work_style: z.array(z.string()).min(R.preferred_work_style.min, R.preferred_work_style.message),
+  career_priorities: z
+    .array(z.string())
+    .min(R.career_priorities.min, R.career_priorities.message)
+    .max(R.career_priorities.max, R.career_priorities.maxMessage),
+  things_i_enjoy: z.string().min(R.things_i_enjoy.min, R.things_i_enjoy.message),
+  things_i_dislike: z.string().min(R.things_i_dislike.min, R.things_i_dislike.message),
+  past_experiences: z.string().min(R.past_experiences.min, R.past_experiences.message),
+  target_location: z.string().min(R.target_location.min, R.target_location.message),
   salary_goal: z.string().optional(),
-  biggest_current_problem: z.string().min(10, "Describe your biggest challenge"),
+  biggest_current_problem: z.string().min(R.biggest_current_problem.min, R.biggest_current_problem.message),
   industries_of_interest: z.string().optional(),
   hard_constraints: z.string().optional(),
   // Added in report v2. Optional so older clients and saved drafts still validate.

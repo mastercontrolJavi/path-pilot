@@ -176,6 +176,11 @@
   outline-offset: var(--focus-offset, 2px);
 }
 
+/* Headings focused by script (tabindex="-1", for screen readers) aren't controls: no ring. */
+[tabindex="-1"]:focus-visible {
+  outline: none;
+}
+
 /* ------------------------------------------------------------------ */
 /* The Route                                                           */
 /* ------------------------------------------------------------------ */
