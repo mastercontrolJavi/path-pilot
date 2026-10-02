@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "@/components/logout-button";
 import { PathPilotLogo } from "@/components/ui/logo";
+import { Toaster } from "@/components/ui/sonner";
 
 export default async function AppLayout({
   children,
@@ -25,8 +26,8 @@ export default async function AppLayout({
     user.user_metadata?.full_name || user.email?.split("@")[0] || "User";
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAFAFA]">
-      <header className="border-b border-border/50 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+    <div className="min-h-screen flex flex-col bg-paper">
+      <header className="border-b border-contour bg-paper sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/dashboard" className="flex items-center">
@@ -60,6 +61,7 @@ export default async function AppLayout({
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
         {children}
       </main>
+      <Toaster position="bottom-right" />
     </div>
   );
 }

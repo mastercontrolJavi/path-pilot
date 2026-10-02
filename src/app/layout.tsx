@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { Toaster } from "@/components/ui/sonner";
 import { Analytics } from "@vercel/analytics/next";
+import { fraunces, fragmentMono, generalSans } from "./fonts";
 import "./globals.css";
-
-const inter = Inter({
-  variable: "--font-sans",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "PathPilot - Find your career path",
@@ -21,10 +15,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-sans bg-[#FAFAFA] text-foreground">
+    <html
+      lang="en"
+      className={`${fraunces.variable} ${fragmentMono.variable} ${generalSans.variable} h-full`}
+    >
+      <body className="flex min-h-full flex-col bg-paper font-sans text-ink">
         {children}
-        <Toaster position="bottom-right" />
         <Analytics />
       </body>
     </html>
