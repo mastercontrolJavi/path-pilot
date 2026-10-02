@@ -207,6 +207,54 @@
   }
 }
 
+/* Landing hero map: hover or focus a destination to thicken its branch and dim the others. */
+@layer components {
+  .pp-hero-map [data-branch] {
+    transition: opacity 180ms var(--ease-out-soft);
+  }
+  .pp-hero-map [data-branch] path {
+    transition: stroke-width 180ms var(--ease-out-soft);
+  }
+  .pp-hero-map:has([data-dest="0"]:is(:hover, :focus-visible)) [data-branch]:not([data-branch="0"]),
+  .pp-hero-map:has([data-dest="1"]:is(:hover, :focus-visible)) [data-branch]:not([data-branch="1"]),
+  .pp-hero-map:has([data-dest="2"]:is(:hover, :focus-visible)) [data-branch]:not([data-branch="2"]) {
+    opacity: 0.25;
+  }
+  .pp-hero-map:has([data-dest="0"]:is(:hover, :focus-visible)) [data-branch="0"] path,
+  .pp-hero-map:has([data-dest="1"]:is(:hover, :focus-visible)) [data-branch="1"] path,
+  .pp-hero-map:has([data-dest="2"]:is(:hover, :focus-visible)) [data-branch="2"] path {
+    stroke-width: 3;
+  }
+
+  /* Held until visible (DrawWhenVisible): removing the attribute replays the draw from the start. */
+  [data-armed] .pp-route-draw,
+  [data-armed] .pp-reveal {
+    animation: none;
+    opacity: 0;
+  }
+
+  /* Marketing nav: the hairline appears once the page scrolls (scroll-driven, no JS). */
+  .pp-nav {
+    border-bottom: 1px solid var(--color-contour);
+  }
+  @supports (animation-timeline: scroll()) {
+    .pp-nav {
+      animation: pp-nav-edge linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 24px;
+    }
+  }
+}
+
+@keyframes pp-nav-edge {
+  from {
+    border-bottom-color: transparent;
+  }
+  to {
+    border-bottom-color: var(--color-contour);
+  }
+}
+
 @keyframes pp-draw-x {
   from {
     transform: scaleX(0);
@@ -269,6 +317,10 @@
   .pp-draw-x,
   .pp-fill {
     animation: none !important;
+  }
+  /* Not motion: a scroll-linked color change. Keep its scroll timeline intact. */
+  .pp-nav {
+    animation-duration: auto !important;
   }
   .pp-pulse {
     animation: none !important;

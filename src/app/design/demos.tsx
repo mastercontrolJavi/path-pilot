@@ -47,7 +47,7 @@ const TOKENS = [
   ["forest", "Primary actions, the Route, focus"],
   ["forest-deep", "Primary hover and pressed"],
   ["moss", "Completed waypoints, chart fills"],
-  ["blaze", "You are here — once per screen"],
+  ["blaze", "You are here, once per screen"],
   ["danger", "Errors"],
   ["success", "Confirmation"],
 ] as const;

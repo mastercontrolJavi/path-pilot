@@ -1,119 +1,112 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/supabase/user";
 import { PathPilotLogo } from "@/components/ui/logo";
+import { buttonVariants } from "@/components/ui/button-variants";
+import { TrackClicks } from "@/components/landing/track-clicks";
+import { cn } from "@/lib/utils";
+
+const navLink =
+  "inline-flex min-h-11 items-center px-1 text-sm font-medium text-ink-muted transition-colors duration-[180ms] hover:text-ink";
 
 export default async function MarketingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border/50 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center">
-            <PathPilotLogo className="text-foreground" />
+    <div className="flex min-h-screen flex-col">
+      <a
+        href="#main"
+        className="sr-only z-[60] rounded-control bg-sheet px-4 py-2 text-sm font-medium text-ink focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+      >
+        Skip to content
+      </a>
+      <header className="pp-nav sticky top-0 z-50 bg-paper">
+        <div className="mx-auto flex h-16 max-w-page items-center justify-between gap-4 px-4 sm:px-6">
+          <Link href="/" className="flex items-center rounded-control text-ink">
+            <PathPilotLogo className="hidden sm:block" />
+            <PathPilotLogo compact className="sm:hidden" />
           </Link>
-          <nav className="flex items-center gap-4">
+          <nav aria-label="Main" className="flex items-center gap-3 sm:gap-6">
+            <Link href="/#how" className={cn(navLink, "hidden md:inline-flex")}>
+              How it works
+            </Link>
+            <Link href="/#sample" className={cn(navLink, "hidden md:inline-flex")}>
+              Sample report
+            </Link>
             {user ? (
-              <Link
-                href="/dashboard"
-                className="text-sm font-medium px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-              >
+              <Link href="/dashboard" className={navLink}>
                 Dashboard
               </Link>
             ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Log in
-                </Link>
-                <Link
-                  href="/signup"
-                  className="text-sm font-medium px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                >
-                  Get started
-                </Link>
-              </>
+              <Link href="/login" className={navLink}>
+                Sign in
+              </Link>
             )}
+            {/* Secondary on purpose: the hero and final CTAs are the page's primary actions. */}
+            <Link
+              href={user ? "/new" : "/signup"}
+              className={buttonVariants({ variant: "secondary", size: "sm" })}
+              data-track="landing_cta_clicked"
+              data-track-location="nav"
+            >
+              Map my next move
+            </Link>
           </nav>
         </div>
       </header>
 
-      <main className="flex-1">{children}</main>
+      <main id="main" className="flex-1">
+        {children}
+      </main>
 
-      <footer className="border-t border-border/50 bg-white">
-        <div className="max-w-6xl mx-auto px-6 py-10">
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-8">
-            <div className="max-w-sm">
-              <PathPilotLogo className="text-foreground mb-3" />
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Career direction, not just applications. PathPilot is an
-                independent project built by{" "}
-                <a
-                  href="https://pathpilot.javiertpadilla.com"
-                  className="underline underline-offset-2 hover:text-foreground"
-                >
-                  Javier Padilla
+      <footer className="border-t border-contour">
+        <div className="mx-auto flex max-w-page flex-col gap-8 px-4 py-12 sm:px-6 md:flex-row md:items-start md:justify-between">
+          <div className="max-w-sm">
+            <PathPilotLogo className="text-ink" />
+            <p className="mt-3 text-sm text-ink-muted">
+              An independent project built by{" "}
+              <a
+                href="https://pathpilot.javiertpadilla.com"
+                className="text-ink underline decoration-contour underline-offset-4 hover:decoration-ink"
+              >
+                Javier Padilla
+              </a>
+              .
+            </p>
+          </div>
+          <nav aria-label="Footer">
+            <ul className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+              <li>
+                <Link href="/demo" className={navLink}>
+                  Sample report
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className={navLink}>
+                  Privacy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className={navLink}>
+                  Terms
+                </Link>
+              </li>
+              <li>
+                <a href="mailto:jvra0102@gmail.com" className={navLink}>
+                  Contact
                 </a>
-                .
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-8 text-sm">
-              <div>
-                <p className="font-medium text-foreground mb-2.5">Product</p>
-                <ul className="space-y-2">
-                  <li>
-                    <Link href="/demo" className="text-muted-foreground hover:text-foreground transition-colors">
-                      Sample analysis
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/signup" className="text-muted-foreground hover:text-foreground transition-colors">
-                      Get started
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <p className="font-medium text-foreground mb-2.5">Legal</p>
-                <ul className="space-y-2">
-                  <li>
-                    <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
-                      Privacy Policy
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
-                      Terms of Service
-                    </Link>
-                  </li>
-                  <li>
-                    <a
-                      href="mailto:jvra0102@gmail.com"
-                      className="text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      Contact
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-10 pt-6 border-t border-border/30 text-xs text-muted-foreground">
-            © {new Date().getFullYear()} PathPilot. All rights reserved.
-          </div>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div className="mx-auto max-w-page px-4 pb-10 text-xs text-ink-faint sm:px-6">
+          © {new Date().getFullYear()} PathPilot
         </div>
       </footer>
+      <TrackClicks />
     </div>
   );
 }

@@ -70,4 +70,20 @@ function RadioGroupRow({
   )
 }
 
-export { RadioGroup, RadioGroupItem, RadioGroupRow }
+/** Compact pill choice (e.g. picking a destination). Arrow keys move between pills. */
+function RadioGroupChip({ className, ...props }: RadioPrimitive.Root.Props) {
+  return (
+    <RadioPrimitive.Root
+      data-slot="radio-group-chip"
+      nativeButton
+      render={<button type="button" />}
+      className={cn(
+        "inline-flex min-h-9 cursor-pointer items-center rounded-full border border-contour bg-sheet px-3.5 py-1.5 text-left text-sm text-ink transition-colors duration-[180ms] hover:border-edge hover:bg-fog disabled:cursor-not-allowed disabled:opacity-50 pointer-coarse:min-h-11 data-checked:border-forest data-checked:bg-forest data-checked:text-sheet",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export { RadioGroup, RadioGroupItem, RadioGroupRow, RadioGroupChip }

@@ -100,38 +100,38 @@ export default function DesignPage() {
 
       <Section id="type" title="Type" note="Fraunces for display, General Sans for everything else, Fragment Mono for data only.">
         <div className="flex flex-col gap-10">
-          <Specimen caption="Hero — Fraunces, clamp(44–80px), weight 400, −0.02em">
+          <Specimen caption="Hero: Fraunces, clamp(44–80px), weight 400, −0.02em">
             <p className="max-w-[16ch] font-display text-hero font-[400] text-ink">
               You know you want out. Here&apos;s where you can go.
             </p>
           </Specimen>
           <div className="grid gap-10 md:grid-cols-2">
-            <Specimen caption="Destination — 3xl, 44px, weight 420">
+            <Specimen caption="Destination: 3xl, 44px, weight 420">
               <p className="font-display text-3xl font-[420] tracking-[-0.015em] text-ink">Product operations manager</p>
             </Specimen>
-            <Specimen caption="Page title — 2xl, 30px">
+            <Specimen caption="Page title: 2xl, 30px">
               <p className="font-display text-2xl font-[400] tracking-[-0.01em] text-ink">Your route</p>
-              <Specimen caption="Section title — xl, 22px" className="mt-6">
+              <Specimen caption="Section title: xl, 22px" className="mt-6">
                 <p className="font-display text-xl font-[420] text-ink">Skill gaps</p>
               </Specimen>
             </Specimen>
           </div>
           <div className="grid gap-10 md:grid-cols-2">
-            <Specimen caption="Lead — General Sans 18px">
+            <Specimen caption="Lead: General Sans 18px">
               <p className="max-w-[52ch] text-lg text-ink-muted">
                 Upload your CV. PathPilot maps the roles your experience already fits and a plan to get there.
               </p>
             </Specimen>
-            <Specimen caption="Body — 16px / 1.6, max 68ch">
+            <Specimen caption="Body: 16px / 1.6, max 68ch">
               <p className="max-w-[68ch] text-base text-ink">
                 Your operations background shows up most clearly in how you run handoffs between teams. That is
                 the core of product operations, and it is rarer than the job titles suggest.
               </p>
-              <p className="mt-3 text-sm text-ink-muted">Secondary — 14px. Meta and helper text.</p>
-              <p className="mt-1 text-xs text-ink-faint">Meta — 12px, ink-faint.</p>
+              <p className="mt-3 text-sm text-ink-muted">Secondary: 14px. Meta and helper text.</p>
+              <p className="mt-1 text-xs text-ink-faint">Meta: 12px, ink-faint.</p>
             </Specimen>
           </div>
-          <Specimen caption="Data — Fragment Mono, tabular figures">
+          <Specimen caption="Data: Fragment Mono, tabular figures">
             <div className="flex flex-wrap gap-x-10 gap-y-4">
               <Stat label="Typical pay" low={95000} high={125000} size="lg" />
               <Stat label="Match" value="87%" size="lg" />
@@ -338,21 +338,21 @@ export default function DesignPage() {
               ))}
             </ul>
           </Specimen>
-          <Specimen caption="Hero — draws once in 1.4s; nodes appear as the line reaches them">
+          <Specimen caption="Hero: draws once in 1.4s; nodes appear as the line reaches them">
             <HeroRouteDemo />
           </Specimen>
-          <Specimen caption="Map — branches from “you are here”; focus a destination to thicken its branch">
+          <Specimen caption="Map: branches from “you are here”; focus a destination to thicken its branch">
             <BranchingDemo />
           </Specimen>
           <div className="grid gap-14 lg:grid-cols-[320px_1fr]">
-            <Specimen caption="Rail — the wizard path; answered waypoints jump back">
+            <Specimen caption="Rail: the wizard path; answered waypoints jump back">
               <RailDemo />
             </Specimen>
-            <Specimen caption="Survey — analysis stages advance along the line">
+            <Specimen caption="Survey: analysis stages advance along the line">
               <SurveyDemo />
             </Specimen>
           </div>
-          <Specimen caption="ContourField — static, seeded, 8% opacity. Landing hero and results map only.">
+          <Specimen caption="ContourField: static, seeded, 8% opacity. Landing hero and results map only.">
             <div className="relative h-64 overflow-hidden rounded-panel border border-contour bg-paper">
               <ContourField className="absolute inset-0 size-full" />
             </div>
