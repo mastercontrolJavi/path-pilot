@@ -28,7 +28,7 @@ export function DestinationList({
 
   return (
     <LayoutGroup>
-      <ol className="border-y border-contour">
+      <ol className="border-b border-contour">
         {paths.map((path, i) => {
           const isOpen = open === i;
           const detailsId = `${idPrefix}-${i}-details`;

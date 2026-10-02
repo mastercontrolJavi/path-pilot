@@ -26,7 +26,7 @@ export function SampleReportStatic() {
           </span>
         ))}
       </div>
-      <ol className="border-y border-contour">
+      <ol className="border-b border-contour">
         {sampleReport.career_paths.map((path, i) => (
           <li key={path.title} className={cn(i > 0 && "border-t border-contour")}>
             <DestinationSummary path={path} rank={i}>

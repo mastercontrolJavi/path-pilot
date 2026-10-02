@@ -28,7 +28,7 @@ export function PayView({ paths, animate = false }: { paths: CareerPath[]; anima
 
   return (
     <div className="flex flex-col">
-      <ul className="flex flex-col divide-y divide-contour border-y border-contour">
+      <ul className="flex flex-col divide-y divide-contour border-b border-contour">
         {paths.map((path, i) => {
           const pay = path.salary_estimate;
           return (

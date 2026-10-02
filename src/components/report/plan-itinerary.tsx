@@ -38,7 +38,7 @@ export function PlanItinerary({
   };
 
   return (
-    <div className="pt-2">
+    <div className="max-w-[52rem] pt-2">
       <p className="text-sm text-ink-muted" aria-live="polite">
         <span className="font-mono text-ink">{done.length}</span> of <span className="font-mono text-ink">{steps.length}</span>{" "}
         days done
