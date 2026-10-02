@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { PathPilotLogo } from "@/components/ui/logo";
 import { Route } from "@/components/pp/route";
+import { OfflineBanner } from "@/components/pp/offline-banner";
 
 // A route already under way: done waypoints, "you are here", and the road ahead.
 const POINTS = [
@@ -17,9 +18,11 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="min-h-screen bg-paper lg:grid lg:grid-cols-[480px_minmax(0,1fr)]">
       <div className="flex min-h-screen flex-col px-4 py-8 sm:px-10 lg:border-r lg:border-contour lg:bg-sheet">
-        <Link href="/" className="w-fit rounded-control text-ink" aria-label="PathPilot home">
-          <PathPilotLogo />
-        </Link>
+        <header>
+          <Link href="/" className="block w-fit rounded-control text-ink" aria-label="PathPilot home">
+            <PathPilotLogo />
+          </Link>
+        </header>
         <main id="main" className="flex flex-1 flex-col justify-center py-12">
           <div className="mx-auto w-full max-w-sm">
             <Suspense>{children}</Suspense>
@@ -50,6 +53,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           Your route starts here.
         </p>
       </div>
+      <OfflineBanner />
     </div>
   );
 }

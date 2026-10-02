@@ -34,7 +34,7 @@ export default async function ResultsPreviewPage({ searchParams }: { searchParam
   const { view = "" } = await searchParams;
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 py-8">
+    <main id="main" className="mx-auto w-full max-w-6xl px-6 py-8">
       <nav aria-label="Preview" className="mb-10 flex flex-wrap gap-x-5 gap-y-2 rounded-panel border border-contour bg-sheet px-4 py-3 text-sm">
         {views.map(([key, label]) => (
           <Link
@@ -67,6 +67,6 @@ export default async function ResultsPreviewPage({ searchParams }: { searchParam
           <FakeDoor enabled />
         </section>
       )}
-    </div>
+    </main>
   );
 }

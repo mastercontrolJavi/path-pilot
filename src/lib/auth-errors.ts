@@ -1,3 +1,5 @@
+import { CONTACT_EMAIL } from "@/config/site";
+
 /**
  * Turn Supabase auth errors into what happened + how to fix it.
  * Never apologise, never be vague.
@@ -32,7 +34,7 @@ export const AUTH_ERROR_COPY: Record<AuthErrorKind, string> = {
   weak_password: "That password is too easy to guess. Use a longer one with letters and numbers.",
   rate_limited: "Too many attempts in a row. Wait a minute, then try again.",
   network: "We couldn't reach the server. Check your connection and try again.",
-  unknown: "That didn't go through. Try again, and if it keeps happening, email jvra0102@gmail.com.",
+  unknown: `That didn't go through. Try again, and if it keeps happening, email ${CONTACT_EMAIL}.`,
 };
 
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

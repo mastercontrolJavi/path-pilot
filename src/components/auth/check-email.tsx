@@ -5,7 +5,6 @@ import { createClient } from "@/lib/supabase/client";
 import { AUTH_ERROR_COPY, classifyAuthError, webmailFor } from "@/lib/auth-errors";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { Button } from "@/components/ui/button";
-import { NodeDot } from "@/components/pp/waypoint";
 import { formatCountdown, useCooldown } from "./use-cooldown";
 
 const COOLDOWN_S = 30;
@@ -46,8 +45,7 @@ export function CheckEmail({
 
   return (
     <div>
-      <NodeDot state="current" size={26} />
-      <h1 className="mt-5 font-display text-2xl font-[400] tracking-[-0.01em] text-ink">Check your email</h1>
+      <h1 className="font-display text-2xl font-[400] tracking-[-0.01em] text-ink">Check your email</h1>
       <p className="mt-3 text-base text-ink-muted">
         We sent a confirmation link to <span className="font-mono break-all text-ink">{email}</span>. Open it to
         finish creating your account.

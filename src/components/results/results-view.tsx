@@ -112,9 +112,10 @@ export function ResultsView({
         <DestinationHero path={best} />
 
         <div className="mt-16 lg:grid lg:grid-cols-[176px_minmax(0,1fr)] lg:gap-14">
-          <aside className="lg:pt-1">
+          {/* SectionNav is its own <nav> landmark; no <aside> around it (it would sit inside <main>). */}
+          <div className="lg:pt-1">
             <SectionNav sections={SECTIONS} />
-          </aside>
+          </div>
 
           <div className="mt-10 flex min-w-0 flex-col gap-20 lg:mt-0">
             <ResultSection

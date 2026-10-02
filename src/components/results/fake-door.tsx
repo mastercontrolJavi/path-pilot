@@ -11,7 +11,7 @@ export function FakeDoor({ enabled = FAKE_DOOR.enabled }: { enabled?: boolean })
   if (!enabled) return null;
 
   return (
-    <aside aria-live="polite" className="mt-12 rounded-panel border border-contour bg-sheet p-6 print:hidden">
+    <section aria-label="Coming next" aria-live="polite" className="mt-12 rounded-panel border border-contour bg-sheet p-6 print:hidden">
       {stage === "offer" && (
         <>
           <p className="font-display text-xl font-[420] text-ink">{FAKE_DOOR.headline}</p>
@@ -45,6 +45,6 @@ export function FakeDoor({ enabled = FAKE_DOOR.enabled }: { enabled?: boolean })
         </>
       )}
       {stage === "done" && <p className="text-base text-ink">{FAKE_DOOR.thanks}</p>}
-    </aside>
+    </section>
   );
 }

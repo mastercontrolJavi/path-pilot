@@ -4,6 +4,7 @@ import { PathPilotLogo } from "@/components/ui/logo";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { TrackClicks } from "@/components/landing/track-clicks";
 import { cn } from "@/lib/utils";
+import { CONTACT_EMAIL } from "@/config/site";
 
 const navLink =
   "inline-flex min-h-11 items-center px-1 text-sm font-medium text-ink-muted transition-colors duration-[180ms] hover:text-ink";
@@ -95,7 +96,7 @@ export default async function MarketingLayout({
                 </Link>
               </li>
               <li>
-                <a href="mailto:jvra0102@gmail.com" className={navLink}>
+                <a href={`mailto:${CONTACT_EMAIL}`} className={navLink}>
                   Contact
                 </a>
               </li>

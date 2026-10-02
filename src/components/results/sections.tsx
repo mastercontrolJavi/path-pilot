@@ -119,7 +119,11 @@ export function CvRewrites({ rewrites }: { rewrites: AnalysisResult["cv_rewrites
 }
 
 export function ConfidenceNote({ note }: { note: string }) {
-  return <aside className="max-w-[68ch] rounded-panel bg-fog/70 px-5 py-4 text-sm text-ink-muted">{note}</aside>;
+  return (
+    <p role="note" className="max-w-[68ch] rounded-panel bg-fog/70 px-5 py-4 text-sm text-ink-muted">
+      {note}
+    </p>
+  );
 }
 
 /** Print only: the detail that's behind toggles on screen. */

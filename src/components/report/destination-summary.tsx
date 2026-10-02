@@ -25,7 +25,8 @@ export function DestinationSummary({
   return (
     <div className="grid gap-x-10 gap-y-4 py-6 md:grid-cols-[minmax(0,1fr)_auto]">
       <div className="min-w-0">
-        {rank === 0 && <p className="mb-1.5 text-sm text-ink-muted">Best fit</p>}
+        {/* On results the rank number and the best-fit panel above already say this. */}
+        {rank === 0 && !showRank && <p className="mb-1.5 text-sm text-ink-muted">Best fit</p>}
         <h3 className="font-display text-xl font-[420] tracking-[-0.01em] text-pretty text-ink md:text-2xl">
           {showRank && <span className="mr-3 font-mono text-base font-normal text-ink-faint">{rank + 1}</span>}
           {path.title}

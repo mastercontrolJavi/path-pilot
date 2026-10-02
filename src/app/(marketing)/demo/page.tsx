@@ -27,6 +27,7 @@ export default async function DemoPage() {
       </header>
 
       <div className="mt-12">
+        <h2 className="sr-only">The report</h2>
         <SampleReport />
       </div>
 

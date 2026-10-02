@@ -59,7 +59,8 @@ export function HeroRoute() {
             <RouteNode x={d.x} y={d.y} r={7} state="destination" revealDelay={TRUNK_S + BRANCH_S + i * STAGGER_S} />
           </g>
         ))}
-        <RouteNode x={ORIGIN.x} y={ORIGIN.y} r={7} state="current" />
+        {/* No pulse: the draw is this page's one animation. */}
+        <RouteNode x={ORIGIN.x} y={ORIGIN.y} r={7} state="current" pulse={false} />
       </svg>
 
       {/* You are here */}

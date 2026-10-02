@@ -66,7 +66,8 @@ export function TerrainMap({
               <RouteNode x={p.x} y={p.y} r={8} state="destination" />
             </g>
           ))}
-          <RouteNode x={t.origin.x} y={t.origin.y} r={8} state="current" />
+          {/* No pulse: the best-fit reveal is this page's one animation. */}
+          <RouteNode x={t.origin.x} y={t.origin.y} r={8} state="current" pulse={false} />
         </svg>
 
         {/* Labels and controls live in HTML so they stay legible at any size. */}
