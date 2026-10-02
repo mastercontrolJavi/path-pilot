@@ -1,6 +1,8 @@
-import type { AnalysisResult } from "@/lib/schemas";
+import { normalizeAnalysisResult, type AnalysisResult } from "@/lib/schemas";
 
-export const demoAnalysis: AnalysisResult = {
+// Legacy (v1) sample without per-path pay or skills. Replaced by lib/fixtures/sample-report.ts in the landing redesign.
+
+export const demoAnalysis: AnalysisResult = normalizeAnalysisResult({
   summary:
     "Maya is a creative communicator with a strong analytical streak - a rare combination in marketing. Her background spans content strategy, campaign analytics, and cross-functional collaboration, but her real edge is translating data into compelling narratives. She's most energised when she owns a project end-to-end, has clear impact metrics, and works with a small, ambitious team. The tension between her desire for creative latitude and her preference for structured goals points toward roles where strategy and execution coexist.",
 
@@ -175,4 +177,4 @@ export const demoAnalysis: AnalysisResult = {
 
   confidence_note:
     "This analysis is based on the information you provided and is intended as a strategic starting point, not a definitive career prescription. The fit scores reflect pattern-matching against common role profiles - they are directional, not precise. Two of your three paths (Content Strategy Lead and Growth Marketing Manager) are high-confidence recommendations given your track record. The Product Marketing path is worth exploring but would benefit from intentional skill-building before targeting senior roles.",
-};
+});

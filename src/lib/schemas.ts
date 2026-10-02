@@ -11,15 +11,45 @@ export const questionnaireSchema = z.object({
   biggest_current_problem: z.string().min(10, "Describe your biggest challenge"),
   industries_of_interest: z.string().optional(),
   hard_constraints: z.string().optional(),
+  // Added in report v2. Optional so older clients and saved drafts still validate.
+  education_status: z.enum(["enrolled", "graduated", "no_degree"]).optional(),
 });
 
 export type QuestionnaireData = z.infer<typeof questionnaireSchema>;
+
+export const EDUCATION_STATUS_LABELS: Record<NonNullable<QuestionnaireData["education_status"]>, string> = {
+  enrolled: "Currently studying",
+  graduated: "Graduated (degree or diploma)",
+  no_degree: "No degree",
+};
 
 export const strengthSchema = z.object({
   name: z.string(),
   score: z.number().min(1).max(10),
   evidence: z.string(),
   why_it_matters: z.string(),
+});
+
+/*
+ * Report v2 fields (per career path). OpenAI strict structured outputs require
+ * every key, so "unknown" is expressed as null, never as a missing key.
+ * Reports generated before v2 lack these keys; read them through
+ * `normalizeAnalysisResult`.
+ */
+export const salaryEstimateSchema = z.object({
+  currency: z.string().describe("ISO 4217 code for the target location, e.g. USD, GBP, EUR"),
+  low: z.number().describe("Lower end of a typical base salary for this role at the user's likely level"),
+  high: z.number().describe("Upper end of that typical range"),
+  period: z.enum(["year", "hour"]),
+  basis: z
+    .string()
+    .describe("One short phrase saying what the estimate assumes, e.g. 'Mid-level, Remote US, base salary'"),
+});
+
+export const skillToBuildSchema = z.object({
+  skill: z.string(),
+  effort: z.enum(["days", "weeks", "months"]).describe("Rough time to close this gap from the user's starting point"),
+  how: z.string().describe("One concrete way to build it: a project, course type, or certification"),
 });
 
 export const careerPathSchema = z.object({
@@ -30,6 +60,19 @@ export const careerPathSchema = z.object({
   example_job_titles: z.array(z.string()).length(5),
   best_for: z.string(),
   tradeoff: z.string(),
+  salary_estimate: salaryEstimateSchema
+    .nullable()
+    .describe("Null if the target location is too vague to estimate responsibly"),
+  skills_you_bring: z
+    .array(z.string())
+    .min(2)
+    .max(6)
+    .describe("Skills from the CV that transfer directly to this role"),
+  skills_to_build: z
+    .array(skillToBuildSchema)
+    .min(1)
+    .max(5)
+    .describe("The most important gaps between the user and this role, most important first"),
 });
 
 export const avoidRoleSchema = z.object({
@@ -60,6 +103,32 @@ export const analysisResultSchema = z.object({
 });
 
 export type AnalysisResult = z.infer<typeof analysisResultSchema>;
+export type CareerPath = AnalysisResult["career_paths"][number];
+export type SalaryEstimate = NonNullable<CareerPath["salary_estimate"]>;
+
+/**
+ * Read a stored result from either report version. Reports generated before
+ * v2 have no pay or skills per path; those keys come back as `null` / `[]`
+ * so the UI can show "not in this report" instead of failing on undefined.
+ */
+export function normalizeAnalysisResult(raw: unknown): AnalysisResult {
+  const result = raw as AnalysisResult;
+  return {
+    ...result,
+    career_paths: result.career_paths.map((path) => ({
+      ...path,
+      salary_estimate: path.salary_estimate ?? null,
+      skills_you_bring: path.skills_you_bring ?? [],
+      skills_to_build: path.skills_to_build ?? [],
+    })),
+  };
+}
+
+/** True for reports generated before pay and skills were added. */
+export function isLegacyResult(raw: unknown): boolean {
+  const paths = (raw as { career_paths?: Array<Record<string, unknown>> })?.career_paths ?? [];
+  return paths.some((p) => !("skills_you_bring" in p));
+}
 
 // API request schema
 export const analyzeRequestSchema = z.object({
