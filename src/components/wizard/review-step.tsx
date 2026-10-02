@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { STEPS, REVIEW_INDEX, summarize, validateStep, type Answers, type CvState } from "./steps";
@@ -15,16 +14,12 @@ export function ReviewStep({
   onEdit,
   onBuild,
   onBack,
-  building,
-  problem,
 }: {
   answers: Answers;
   cv: CvState;
   onEdit: (index: number) => void;
   onBuild: () => void;
   onBack: () => void;
-  building: boolean;
-  problem: ReactNode;
 }) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => headingRef.current?.focus({ preventScroll: true }), []);
@@ -68,26 +63,15 @@ export function ReviewStep({
         })}
       </dl>
 
-      {problem && (
-        <div role="alert" className="mt-6 rounded-control border border-danger/30 bg-danger/5 px-4 py-3 text-sm text-ink">
-          {problem}
-        </div>
-      )}
-
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
-        <Button variant="quiet" onClick={onBack} className="-ml-3" disabled={building}>
+        <Button variant="quiet" onClick={onBack} className="-ml-3">
           Back
         </Button>
-        <Button size="lg" onClick={onBuild} disabled={building} aria-busy={building}>
-          {building && <Loader2 className="animate-spin" />}
-          {building ? "Building your route" : "Build my route"}
+        <Button size="lg" onClick={onBuild}>
+          Build my route
         </Button>
       </div>
-      {/* COPY-CHECK: re-time once report v2 runs in production. */}
-      <p aria-live="polite" className="mt-4 min-h-6 text-sm text-ink-muted md:text-right">
-        {building ? "Reading your CV and matching roles. This usually takes about a minute." : ""}
-      </p>
-      <p className="mt-2 text-sm text-ink-muted">
+      <p className="mt-4 text-sm text-ink-muted">
         Your CV and answers are sent to OpenAI to write the report.{" "}
         <Link href="/privacy" className="rounded-control text-forest underline decoration-forest/40 underline-offset-4">
           Privacy policy

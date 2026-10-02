@@ -1,22 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
-import { toast } from "sonner";
 
 interface FeedbackWidgetProps {
   analysisId: string;
 }
 
+/** Was this report useful? Writes to analysis_feedback (owner-only RLS). */
 export function FeedbackWidget({ analysisId }: FeedbackWidgetProps) {
   const [submitted, setSubmitted] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
   const [helpful, setHelpful] = useState<boolean | null>(null);
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   const submit = async (isHelpful: boolean) => {
     setHelpful(isHelpful);
@@ -29,11 +30,14 @@ export function FeedbackWidget({ analysisId }: FeedbackWidgetProps) {
 
   const sendFeedback = async (isHelpful: boolean, feedbackNotes: string) => {
     setLoading(true);
+    setFailed(false);
     const supabase = createClient();
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
-      toast.error("You must be logged in to submit feedback");
+      setFailed(true);
       setLoading(false);
       return;
     }
@@ -45,62 +49,49 @@ export function FeedbackWidget({ analysisId }: FeedbackWidgetProps) {
       notes: feedbackNotes || null,
     });
 
-    if (error) {
-      toast.error("Failed to submit feedback");
-    } else {
-      setSubmitted(true);
-      toast.success("Thanks for your feedback!");
-    }
+    if (error) setFailed(true);
+    else setSubmitted(true);
     setLoading(false);
   };
 
-  if (submitted) {
-    return (
-      <div className="text-center py-6 text-sm text-muted-foreground">
-        Thank you for your feedback!
-      </div>
-    );
-  }
-
   return (
-    <div className="border border-border/50 rounded-xl p-6 bg-white text-center">
-      <p className="text-sm font-medium mb-4">Was this analysis helpful?</p>
-      {!showNotes ? (
-        <div className="flex justify-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => submit(true)}
-            className="gap-2"
-          >
-            <ThumbsUp className="w-4 h-4" /> Yes
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => submit(false)}
-            className="gap-2"
-          >
-            <ThumbsDown className="w-4 h-4" /> Not really
-          </Button>
-        </div>
+    <section aria-labelledby="feedback-title" aria-live="polite" className="border-t border-contour pt-8 print:hidden">
+      {submitted ? (
+        <p className="text-base text-ink">Thanks. Your feedback shapes how routes are built.</p>
       ) : (
-        <div className="max-w-sm mx-auto space-y-3">
-          <Textarea
-            placeholder="What could be better?"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            rows={3}
-          />
-          <Button
-            size="sm"
-            onClick={() => sendFeedback(helpful!, notes)}
-            disabled={loading}
-          >
-            {loading ? "Sending..." : "Send feedback"}
-          </Button>
-        </div>
+        <>
+          <h2 id="feedback-title" className="text-base font-medium text-ink">
+            Was this report useful?
+          </h2>
+          {!showNotes ? (
+            <div className="mt-4 flex gap-3">
+              <Button variant="secondary" onClick={() => submit(true)} disabled={loading}>
+                Yes
+              </Button>
+              <Button variant="secondary" onClick={() => submit(false)} disabled={loading}>
+                Not really
+              </Button>
+            </div>
+          ) : (
+            <div className="mt-4 flex max-w-lg flex-col gap-3">
+              <Label htmlFor="feedback-notes" className="font-normal text-ink-muted">
+                What would have made it more useful?
+              </Label>
+              <Textarea id="feedback-notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} />
+              <div>
+                <Button onClick={() => sendFeedback(helpful!, notes)} disabled={loading} aria-busy={loading}>
+                  {loading ? "Sending" : "Send feedback"}
+                </Button>
+              </div>
+            </div>
+          )}
+          {failed && (
+            <p role="alert" className="mt-3 text-sm text-danger">
+              That didn&apos;t send. Check your connection and try again.
+            </p>
+          )}
+        </>
       )}
-    </div>
+    </section>
   );
 }

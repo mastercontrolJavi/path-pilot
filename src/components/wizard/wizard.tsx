@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import Link from "next/link";
+import { useEffect, useMemo, useRef, useState, type ComponentProps, type ReactNode } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
+import { AnalysisRun, type RunOutcome } from "@/components/analysis/analysis-run";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -29,9 +29,7 @@ import { StepFooter } from "./step-chrome";
 type Draft = { v: 1; answers: Answers; step: number; furthest: number; cvMode: CvState["mode"] };
 const EMPTY_DRAFT: Draft = { v: 1, answers: EMPTY_ANSWERS, step: 0, furthest: 0, cvMode: "upload" };
 
-export type SubmitResult =
-  | { ok: true; analysisId: string }
-  | { ok: false; kind: "session" | "upload" | "network" | "unreadable" | "server" };
+export type SubmitFn = (input: { answers: Answers; cv: CvState; onSent: () => void }) => Promise<RunOutcome>;
 
 const UNREADABLE =
   "We couldn't read text in that PDF. It may be a scanned image: export it as a text PDF, or paste your CV text instead.";
@@ -50,10 +48,13 @@ export function Wizard({
   storageKey,
   submit,
   onDone,
+  status,
 }: {
   storageKey: string;
-  submit: (input: { answers: Answers; cv: CvState }) => Promise<SubmitResult>;
+  submit: SubmitFn;
   onDone: (analysisId: string) => void;
+  /** Override the analysis status check (design preview only). */
+  status?: ComponentProps<typeof AnalysisRun>["status"];
 }) {
   const hydrated = useHydrated();
   const reduced = useReducedMotion();
@@ -68,8 +69,7 @@ export function Wizard({
 
   const [dir, setDir] = useState(1);
   const [error, setError] = useState<string | null>(null);
-  const [building, setBuilding] = useState(false);
-  const [problem, setProblem] = useState<ReactNode>(null);
+  const [running, setRunning] = useState(false);
 
   // Once, after hydration: welcome back, or count a fresh start.
   const greeted = useRef(false);
@@ -88,7 +88,6 @@ export function Wizard({
   function go(index: number, direction: number) {
     setDir(direction);
     setError(null);
-    setProblem(null);
     setDraft((d) => ({ ...d, step: index, furthest: Math.max(d.furthest, index) }));
     window.scrollTo({ top: 0 });
   }
@@ -128,7 +127,7 @@ export function Wizard({
   // Alt/⌘ + ← goes back (not while typing, where it moves the caret).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (building || isTypingTarget(e.target)) return;
+      if (running || isTypingTarget(e.target)) return;
       if ((e.altKey || e.metaKey) && e.key === "ArrowLeft" && step > 0) {
         e.preventDefault();
         go(step - 1, -1);
@@ -149,7 +148,7 @@ export function Wizard({
     return () => window.removeEventListener("keydown", onKey);
   });
 
-  async function build() {
+  function build() {
     const missing = firstIncomplete(answers, cv);
     if (missing !== null) {
       go(missing, -1);
@@ -157,45 +156,31 @@ export function Wizard({
       return;
     }
     track("wizard_completed");
-    setBuilding(true);
-    setProblem(null);
-    let result: SubmitResult;
-    try {
-      result = await submit({ answers, cv });
-    } catch {
-      result = { ok: false, kind: "network" };
-    }
-    if (result.ok) {
-      clearLocalStorageState(storageKey);
-      onDone(result.analysisId);
-      return; // stay in the building state while the next page loads
-    }
-    setBuilding(false);
-    if (result.kind === "unreadable") {
-      go(0, -1);
-      setError(UNREADABLE);
-      return;
-    }
-    setProblem(
-      result.kind === "session" ? (
-        <>
-          You&apos;ve been signed out.{" "}
-          <Link href="/login?redirect=/new" className="text-forest underline underline-offset-4">
-            Sign in again
-          </Link>{" "}
-          and you&apos;ll come straight back here. Your answers are saved; you&apos;ll add your CV again.
-        </>
-      ) : result.kind === "upload" ? (
-        "Your CV didn't upload. Check your connection and try again. Your file and answers are still here."
-      ) : result.kind === "network" ? (
-        "We couldn't reach PathPilot. Check your connection and try again. Nothing has been lost."
-      ) : (
-        "The analysis didn't start. Try again in a minute. Your answers are saved."
-      )
-    );
+    setRunning(true);
+    window.scrollTo({ top: 0 });
   }
 
   if (!hydrated) return <WizardSkeleton />;
+
+  // "Build my route" hands over to the survey; the wizard stays mounted underneath in state only.
+  if (running) {
+    return (
+      <AnalysisRun
+        start={({ onSent }) => submit({ answers, cv, onSent })}
+        status={status}
+        onFinished={(analysisId) => {
+          clearLocalStorageState(storageKey);
+          onDone(analysisId);
+        }}
+        onUnreadable={() => {
+          setRunning(false);
+          go(0, -1);
+          setError(UNREADABLE);
+        }}
+        secondary={{ label: "Back to your answers", onClick: () => setRunning(false) }}
+      />
+    );
+  }
 
   const current = STEPS[step];
   const backToReview =
@@ -253,8 +238,6 @@ export function Wizard({
         onEdit={(i) => go(i, -1)}
         onBuild={build}
         onBack={back}
-        building={building}
-        problem={problem}
       />
     );
   }

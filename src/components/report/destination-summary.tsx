@@ -9,12 +9,15 @@ export function DestinationSummary({
   rank,
   animate = false,
   delay = 0,
+  showRank = false,
   children,
 }: {
   path: CareerPath;
   rank: number;
   animate?: boolean;
   delay?: number;
+  /** Show the rank number (results page, where the map refers to it). */
+  showRank?: boolean;
   /** Trailing controls, e.g. the details toggle. */
   children?: ReactNode;
 }) {
@@ -24,6 +27,7 @@ export function DestinationSummary({
       <div className="min-w-0">
         {rank === 0 && <p className="mb-1.5 text-sm text-ink-muted">Best fit</p>}
         <h3 className="font-display text-xl font-[420] tracking-[-0.01em] text-pretty text-ink md:text-2xl">
+          {showRank && <span className="mr-3 font-mono text-base font-normal text-ink-faint">{rank + 1}</span>}
           {path.title}
         </h3>
         <p className="mt-2 max-w-[62ch] text-base text-ink-muted">{path.why_it_fits}</p>

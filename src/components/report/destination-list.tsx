@@ -13,16 +13,23 @@ export const detailsToggleClass =
 
 /**
  * Ranked destination rows (not cards). Expanding a row fades its detail in;
- * rows below glide to their new position (transform only).
+ * rows below glide to their new position (transform only). On the results
+ * page, `highlight` / `onHighlight` keep the rows in step with the terrain map.
  */
 export function DestinationList({
   paths,
   animate = false,
   idPrefix = "destination",
+  showRank = false,
+  highlight = null,
+  onHighlight,
 }: {
   paths: CareerPath[];
   animate?: boolean;
   idPrefix?: string;
+  showRank?: boolean;
+  highlight?: number | null;
+  onHighlight?: (index: number | null, source: "hover" | "focus") => void;
 }) {
   const [open, setOpen] = useState<number | null>(null);
 
@@ -35,17 +42,27 @@ export function DestinationList({
           return (
             <motion.li
               key={path.title}
+              id={`${idPrefix}-row-${i}`}
               layout="position"
               transition={{ duration: duration.base, ease: ease.out }}
-              className={cn(i > 0 && "border-t border-contour")}
+              onMouseEnter={() => onHighlight?.(i, "hover")}
+              onMouseLeave={() => onHighlight?.(null, "hover")}
+              onFocus={() => onHighlight?.(i, "focus")}
+              onBlur={() => onHighlight?.(null, "focus")}
+              className={cn(
+                "relative scroll-mt-32 transition-colors duration-[180ms]",
+                i > 0 && "border-t border-contour",
+                highlight === i &&
+                  "bg-fog/60 before:absolute before:inset-y-0 before:-left-4 before:w-[3px] before:rounded-full before:bg-forest"
+              )}
             >
-              <DestinationSummary path={path} rank={i} animate={animate} delay={i * 0.12}>
+              <DestinationSummary path={path} rank={i} animate={animate} delay={i * 0.12} showRank={showRank}>
                 <button
                   type="button"
                   aria-expanded={isOpen}
                   aria-controls={detailsId}
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className={cn(detailsToggleClass, "cursor-pointer hover:decoration-forest")}
+                  className={cn(detailsToggleClass, "cursor-pointer hover:decoration-forest print:hidden")}
                 >
                   {isOpen ? "Hide details" : "Details"}
                   <ChevronDown

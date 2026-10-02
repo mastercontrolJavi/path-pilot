@@ -163,14 +163,3 @@ export const QUESTIONS: QuestionDefinition[] = [
     required: false,
   },
 ];
-
-export const LOADING_MESSAGES = [
-  "Reading your CV...",
-  "Identifying your real strengths...",
-  "Mapping realistic career paths...",
-  "Analyzing your preferences...",
-  "Finding roles that actually fit...",
-  "Building your 7-day action plan...",
-  "Crafting CV improvements...",
-  "Finalizing your report...",
-];

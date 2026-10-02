@@ -3,24 +3,34 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupChip } from "@/components/ui/radio-group";
-import { Wizard, type SubmitResult } from "@/components/wizard/wizard";
+import { Wizard } from "@/components/wizard/wizard";
+import type { RunOutcome } from "@/components/analysis/analysis-run";
 import { CheckEmail } from "@/components/auth/check-email";
 
 const OUTCOMES = [
   ["ok", "Success"],
+  ["slow", "Slow (35s)"],
+  ["failed", "Analysis failed"],
   ["unreadable", "Unreadable PDF"],
   ["network", "Network error"],
   ["session", "Signed out"],
 ] as const;
+type Outcome = (typeof OUTCOMES)[number][0];
 
-/** The real wizard with a mock submit, for review without an account or API keys. */
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/** The real wizard and survey with a mock submit, for review without an account or API keys. */
 export function WizardPreview() {
-  const [outcome, setOutcome] = useState<(typeof OUTCOMES)[number][0]>("ok");
+  const [outcome, setOutcome] = useState<Outcome>("ok");
 
-  async function mockSubmit(): Promise<SubmitResult> {
-    await new Promise((r) => setTimeout(r, 1200));
-    if (outcome === "ok") return { ok: true, analysisId: "preview" };
-    return { ok: false, kind: outcome };
+  async function mockSubmit({ onSent }: { onSent: () => void }): Promise<RunOutcome> {
+    await wait(900);
+    if (outcome === "session") return { ok: false, kind: "session" };
+    if (outcome === "network") return { ok: false, kind: "network" };
+    onSent();
+    await wait(outcome === "slow" ? 35_000 : 7_000);
+    if (outcome === "unreadable") return { ok: false, kind: "unreadable" };
+    return { ok: true, analysisId: "preview" };
   }
 
   return (
@@ -29,7 +39,7 @@ export function WizardPreview() {
         <span>Preview outcome for “Build my route”:</span>
         <RadioGroup
           value={outcome}
-          onValueChange={(v) => setOutcome(v as typeof outcome)}
+          onValueChange={(v) => setOutcome(v as Outcome)}
           aria-label="Preview outcome"
           className="flex w-auto flex-wrap gap-2"
         >
@@ -44,6 +54,7 @@ export function WizardPreview() {
       <Wizard
         storageKey="pp:wizard:v1:design-preview"
         submit={mockSubmit}
+        status={async () => (outcome === "failed" ? "failed" : "completed")}
         onDone={() => toast.success("Route built (preview only, nothing was sent)")}
       />
 

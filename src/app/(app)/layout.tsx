@@ -25,7 +25,7 @@ export default async function AppLayout({
 
   return (
     <div className="min-h-screen flex flex-col bg-paper">
-      <header className="border-b border-contour bg-paper sticky top-0 z-50">
+      <header className="border-b border-contour bg-paper sticky top-0 z-50 print:hidden">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/dashboard" className="flex items-center">

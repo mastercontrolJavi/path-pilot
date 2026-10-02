@@ -14,6 +14,7 @@ export function MatchMeter({
   delay = 0,
   showValue = true,
   size = "md",
+  valueText,
   className,
 }: {
   /** 0–100 */
@@ -24,6 +25,8 @@ export function MatchMeter({
   delay?: number;
   showValue?: boolean;
   size?: "sm" | "md";
+  /** Spoken value, when "N% match" is the wrong reading (e.g. strength scores). */
+  valueText?: string;
   className?: string;
 }) {
   const v = Math.max(0, Math.min(100, Math.round(value)));
@@ -36,7 +39,7 @@ export function MatchMeter({
       aria-valuemax={100}
       aria-valuenow={v}
       aria-label={label}
-      aria-valuetext={`${v}% ${label.toLowerCase()}`}
+      aria-valuetext={valueText ?? `${v}% ${label.toLowerCase()}`}
       className={cn("flex items-center gap-3", className)}
     >
       <div aria-hidden className={cn("flex gap-[3px]", size === "sm" ? "h-1.5 w-20" : "h-2 w-28")}>

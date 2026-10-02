@@ -200,6 +200,10 @@
     transform-origin: center;
     animation: pp-pulse 2.4s var(--ease-route) infinite;
   }
+  /* Results: the best-fit panel settles in (once, on load). */
+  .pp-settle {
+    animation: pp-settle 0.52s var(--ease-out-soft) both;
+  }
   /* Horizontal draw-in for range bars (transform only). */
   .pp-draw-x {
     transform-origin: left center;
@@ -257,6 +261,17 @@
   }
   to {
     border-bottom-color: var(--color-contour);
+  }
+}
+
+@keyframes pp-settle {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
@@ -333,8 +348,46 @@
   }
 }
 
+/*
+ * "Save as PDF": paper off, forest and ink only, Fraunces titles, sections on
+ * their own pages where marked, no motion, no app chrome.
+ */
 @media print {
+  @page {
+    margin: 18mm 16mm;
+  }
+  html,
   body {
-    background: white;
+    background: white !important;
+  }
+  body {
+    font-size: 11pt;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .pp-settle,
+  .pp-reveal,
+  .pp-fill,
+  .pp-draw-x {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  section,
+  li,
+  figure {
+    break-inside: avoid;
+  }
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
   }
 }
