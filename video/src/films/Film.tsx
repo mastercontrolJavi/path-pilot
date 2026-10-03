@@ -1,5 +1,5 @@
 import { AbsoluteFill, Audio, interpolate, Sequence, staticFile, useVideoConfig } from "remotion";
-import { AUDIO, FILM_S, MUSIC_FADE_S, SCENES, frames } from "../timing";
+import { AUDIO, FILM_S, MUSIC_FADE_S, SCENES, SFX, frames } from "../timing";
 import type { Layout } from "../components/Frame";
 import { S2Fog } from "../scenes/S2Fog";
 import { S3OneRoute } from "../scenes/S3OneRoute";
@@ -31,6 +31,7 @@ export function Film({ layout }: FilmProps) {
         src={staticFile(AUDIO)}
         volume={(f) => interpolate(f, [end - frames(MUSIC_FADE_S, fps), end], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
       />
+      <Audio src={staticFile(SFX)} />
     </AbsoluteFill>
   );
 }

@@ -6,12 +6,16 @@
   "description": "PathPilot product film (Remotion). Self-contained: no dependencies shared with the app.",
   "scripts": {
     "studio": "remotion studio",
+    "score": "node scripts/score.mjs",
     "click": "node scripts/click-track.mjs",
     "holds": "node scripts/check-holds.ts",
     "stills": "node scripts/stills.mjs",
-    "render:preview": "remotion render Film16x9 out/pathpilot-16x9-animatic.mp4 --props=./scripts/props/preview-16x9.json --codec=h264 --crf=23",
+    "render:preview": "remotion render Film16x9 out/pathpilot-16x9-preview.mp4 --props=./scripts/props/preview-16x9.json --codec=h264 --crf=23",
     "render:master": "remotion render Film16x9 out/pathpilot-16x9.mp4 --codec=h264 --crf=18",
+    "render:2k": "remotion render Film16x9 out/pathpilot-16x9-1440p.mp4 --scale=1.3333333333 --codec=h264 --crf=18",
+    "render:4k": "remotion render Film16x9 out/pathpilot-16x9-2160p.mp4 --scale=2 --codec=h264 --crf=18",
     "render:social": "remotion render Film9x16 out/pathpilot-9x16.mp4 --codec=h264 --crf=18",
+    "render:social:4k": "remotion render Film9x16 out/pathpilot-9x16-2160x3840.mp4 --scale=2 --codec=h264 --crf=18",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
