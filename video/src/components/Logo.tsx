@@ -1,10 +1,29 @@
 import { color } from "../tokens";
 import { font } from "../fonts";
 
-/** The app's wayfinding mark and wordmark (src/components/ui/logo.tsx), scalable. viewBox 0 0 140 28. */
+let canvas: HTMLCanvasElement | null = null;
+
+/**
+ * Right edge of the wordmark's ink, in logo units. The app's artwork is 140
+ * units wide but "Pilot" ends near 119, so a centred 140-unit box sits about
+ * 10 units left of centre. Measured from the loaded font (fonts.ts blocks
+ * rendering until General Sans is ready); 120 if canvas isn't available.
+ */
+function wordmarkRight(): number {
+  if (typeof document === "undefined") return 120;
+  canvas ??= document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return 120;
+  ctx.font = `300 14px ${font.sans}`;
+  const ink = ctx.measureText("Pilot").actualBoundingBoxRight;
+  return 86 + ink - 0.4 * 4; // letter-spacing −0.4 between the 5 glyphs
+}
+
+/** The app's wayfinding mark and wordmark (src/components/ui/logo.tsx), scalable, boxed tight to its ink so it centres truly. */
 export function Logo({ height, markOpacity = 1, wordOpacity = 1, routeProgress = 1 }: { height: number; markOpacity?: number; wordOpacity?: number; routeProgress?: number }) {
+  const right = wordmarkRight();
   return (
-    <svg height={height} width={(height * 140) / 28} viewBox="0 0 140 28" fill="none" style={{ overflow: "visible" }}>
+    <svg height={height} width={(height * right) / 28} viewBox={`0 0 ${right} 28`} fill="none" style={{ overflow: "visible" }}>
       <g color={color.ink} opacity={markOpacity}>
         <line x1="0" y1="14" x2="44" y2="14" stroke="currentColor" strokeWidth="0.5" opacity="0.25" />
         <path
