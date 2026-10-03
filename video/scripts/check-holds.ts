@@ -12,10 +12,10 @@ const kinetic = (start: number, words: number) => start + (words - 1) * 0.05 + 0
 const branchIn = (b: number) => S7 + b + 0.6 - 0.1 + 0.25;
 
 const lines: { text: string; in: number; out: number }[] = [
-  { text: "Operations coordinator · 6 yrs", in: S2, out: S2 + 1.9 },
+  { text: "Operations coordinator · 6 yrs", in: S2 + 0.3, out: S2 + 2.2 },
   { text: "Changing careers usually means forty tabs.", in: S2 + kinetic(1.0, 6), out: S3 },
   { text: "PathPilot gives you one route.", in: S3 + kinetic(0.45, 5), out: S4 },
-  { text: "Start with your CV", in: S4 + 0.15 + 4 / 60 + 0.4, out: S7 },
+  { text: "Start with your CV", in: S4 + 0.8, out: S7 },
   { text: "maria-reyes-cv.pdf", in: S4 + 1.2, out: S7 },
   { text: "214 KB", in: S4 + 1.2, out: S7 },
   { text: "Ready", in: S4 + 1.8, out: S7 },

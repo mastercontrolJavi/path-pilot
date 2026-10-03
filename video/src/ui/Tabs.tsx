@@ -12,8 +12,8 @@ export const DOT = {
   portrait: { start: { x: 300, y: 1250 }, corner: { x: 110, y: 1610 } },
 } as const;
 
-/** The label holds still for its reading time (1.9s) before the push starts. */
-export const PUSH = { start: 1.9, dur: 1.5 } as const;
+/** The dot lands (0–0.3s), then its label holds for its reading time (1.9s) before the push. */
+export const PUSH = { start: 2.2, dur: 1.5 } as const;
 
 /** Forty tabs, deterministic. Arrival accelerates: the gaps shrink toward 2.4s. */
 export function placeTabs(layout: Layout): TabPlacement[] {
@@ -46,7 +46,7 @@ export function placeTabs(layout: Layout): TabPlacement[] {
 }
 
 /** A browser-tab strip: rounded top corners, favicon, title, close mark. */
-export function TabStrip({ p, opacity, scale = 1, fontSize = 20 }: { p: TabPlacement; opacity: number; scale?: number; fontSize?: number }) {
+export function TabStrip({ p, opacity, scale = 1, squash = 1, fontSize = 20 }: { p: TabPlacement; opacity: number; scale?: number; squash?: number; fontSize?: number }) {
   const h = fontSize * 2.5;
   return (
     <div
@@ -56,7 +56,7 @@ export function TabStrip({ p, opacity, scale = 1, fontSize = 20 }: { p: TabPlace
         top: p.y,
         width: p.w,
         height: h,
-        transform: `rotate(${p.rot}deg) scale(${scale})`,
+        transform: `rotate(${p.rot}deg) scale(${scale}) scaleY(${squash})`,
         transformOrigin: "center",
         opacity,
         background: p.shade === "sheet" ? color.sheet : color.fog,

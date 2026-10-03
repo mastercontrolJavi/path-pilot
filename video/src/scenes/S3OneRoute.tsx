@@ -1,6 +1,7 @@
 import { persona } from "../fixtures";
 import { mix, prog } from "../lib/anim";
 import { useT } from "../lib/useT";
+import { Camera } from "../components/Camera";
 import { KineticLine } from "../components/KineticLine";
 import { RouteLine } from "../components/Route";
 import { ContourField } from "../components/ContourField";
@@ -18,38 +19,54 @@ export function routePoints(layout: Layout) {
     : [c, { x: 400, y: 1440 }, { x: 680, y: 1500 }, { x: 930, y: 1260 }, { x: 1180, y: 1170 }];
 }
 
-/** Scene 3 — on the beat, every tab collapses into the dot and one line leaves it: the Route. */
+/** Collapse window (seconds); Film wraps it in camera motion blur. */
+export const COLLAPSE = 0.35;
+
+/**
+ * Scene 3 — on the beat, every tab collapses into the dot, flattening as it
+ * goes, and one line leaves it: the Route. Contours surface behind it (deeper,
+ * 30% parallax); the camera leans toward where the line is heading.
+ */
 export function S3OneRoute({ layout }: { layout: Layout }) {
   const t = useT();
   const L = layout === "landscape";
   const { w, h } = SIZE[layout];
   const c = DOT[layout].corner;
-  const collapse = prog(t, 0, 0.35, ease.inOut);
+  const collapse = prog(t, 0, COLLAPSE, ease.inOut);
   const draw = prog(t, 0.25, 1.1, ease.inOut);
-  const field = prog(t, 0.4, 0.8);
+  const lean = prog(t, 0.6, 2.4, ease.inOut);
 
   return (
     <Paper>
-      <div style={{ position: "absolute", inset: 0, opacity: field }}>
-        <ContourField seed={11} width={w} height={h} opacity={0.07} />
-      </div>
-      {collapse < 1 && (
-        <div style={{ position: "absolute", inset: 0, opacity: 0.5 * (1 - collapse) }}>
-          {placeTabs(layout).map((p, i) => (
-            <TabStrip
-              key={i}
-              p={{ ...p, x: mix(p.x, c.x - p.w / 2, collapse), y: mix(p.y, c.y - 20, collapse), rot: p.rot * (1 - collapse) }}
-              opacity={1}
-              scale={mix(1, 0.15, collapse)}
-              fontSize={L ? 20 : 24}
-            />
-          ))}
-        </div>
-      )}
-      <svg width={w} height={h} style={{ position: "absolute", inset: 0, overflow: "visible" }}>
-        <RouteLine points={routePoints(layout)} progress={draw} width={L ? 4 : 4.5} />
-      </svg>
-      <Dot x={c.x} y={c.y} label={persona.current} size={L ? 22 : 24} labelOpacity={1 - prog(t, 0.2, 0.3)} />
+      <Camera
+        t={t}
+        shot={{ x: (L ? -36 : -20) * lean, y: (L ? 10 : -24) * lean }}
+        origin={`${c.x}px ${c.y}px`}
+        background={
+          <div style={{ position: "absolute", inset: 0, opacity: prog(t, 0.4, 0.8) }}>
+            <ContourField seed={11} width={w} height={h} opacity={0.07} />
+          </div>
+        }
+      >
+        {collapse < 1 && (
+          <div style={{ position: "absolute", inset: 0, opacity: 0.5 * (1 - collapse * collapse) }}>
+            {placeTabs(layout).map((p, i) => (
+              <TabStrip
+                key={i}
+                p={{ ...p, x: mix(p.x, c.x - p.w / 2, collapse), y: mix(p.y, c.y - 20, collapse), rot: p.rot * (1 - collapse) }}
+                opacity={1}
+                scale={mix(1, 0.2, collapse)}
+                squash={mix(1, 0.08, collapse)}
+                fontSize={L ? 20 : 24}
+              />
+            ))}
+          </div>
+        )}
+        <svg width={w} height={h} style={{ position: "absolute", inset: 0, overflow: "visible" }}>
+          <RouteLine points={routePoints(layout)} progress={draw} width={L ? 4 : 4.5} />
+        </svg>
+        <Dot x={c.x} y={c.y} label={persona.current} size={L ? 22 : 24} labelOpacity={1 - prog(t, 0.2, 0.3)} />
+      </Camera>
       {/* The previous statement leaves as a whole on the cut. */}
       {t < 0.3 && <KineticLine t={t} start={-10} exit={0} lines={fogLines(layout)} style={fogStyle(layout)} />}
       <KineticLine
