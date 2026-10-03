@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { globalRateLimit } from "@/lib/ratelimit";
+import { globalRateLimit, rateLimitResponse } from "@/lib/ratelimit";
 
 function getClientIp(request: NextRequest): string {
   const forwarded = request.headers.get("x-forwarded-for");
@@ -16,26 +16,12 @@ export async function middleware(request: NextRequest) {
   requestHeaders.set("x-pathname", request.nextUrl.pathname);
 
   // Lightweight global IP-based rate limit to mitigate basic DDoS
-  if (globalRateLimit) {
-    const ip = getClientIp(request);
-    const { success, limit, remaining, reset } = await globalRateLimit.limit(
-      `ip:${ip}`
-    );
-
-    if (!success) {
-      return NextResponse.json(
-        { error: "Too many requests. Please slow down." },
-        {
-          status: 429,
-          headers: {
-            "X-RateLimit-Limit": limit.toString(),
-            "X-RateLimit-Remaining": remaining.toString(),
-            "X-RateLimit-Reset": reset.toString(),
-          },
-        }
-      );
-    }
-  }
+  const limited = await rateLimitResponse(
+    globalRateLimit,
+    `ip:${getClientIp(request)}`,
+    "Too many requests. Please slow down."
+  );
+  if (limited) return limited;
 
   let supabaseResponse = NextResponse.next({
     request: { headers: requestHeaders },
