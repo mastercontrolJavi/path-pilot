@@ -1,10 +1,27 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { globalRateLimit, rateLimitResponse } from "@/lib/ratelimit";
+
+function getClientIp(request: NextRequest): string {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    return forwarded.split(",")[0].trim();
+  }
+  return request.headers.get("x-real-ip") ?? "unknown";
+}
 
 export async function middleware(request: NextRequest) {
   // Forward pathname to server components via request header
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-pathname", request.nextUrl.pathname);
+
+  // Lightweight global IP-based rate limit to mitigate basic DDoS
+  const limited = await rateLimitResponse(
+    globalRateLimit,
+    `ip:${getClientIp(request)}`,
+    "Too many requests. Please slow down."
+  );
+  if (limited) return limited;
 
   let supabaseResponse = NextResponse.next({
     request: { headers: requestHeaders },
@@ -37,7 +54,12 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protected routes - redirect to login if no user
+  // Protected API routes - return 401 JSON for unauthenticated requests
+  if (request.nextUrl.pathname.startsWith("/api/analyze") && !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Protected page routes - redirect to login if no user
   const protectedPaths = ["/dashboard", "/new", "/analysis"];
   const isProtected = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path)

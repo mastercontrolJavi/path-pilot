@@ -3,6 +3,8 @@ import { analyzeRequestSchema, analysisResultSchema } from "@/lib/schemas";
 import { buildAnalysisPrompt, SYSTEM_PROMPT } from "@/lib/prompts";
 import { openai } from "@/lib/openai";
 import { extractTextFromPdf } from "@/lib/pdf";
+import { analyzeRateLimit, rateLimitResponse } from "@/lib/ratelimit";
+import { smartTruncateCv } from "@/lib/truncate";
 import { generateObject } from "ai";
 import { NextResponse } from "next/server";
 
@@ -19,6 +21,13 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const limited = await rateLimitResponse(
+      analyzeRateLimit,
+      `user:${user.id}`,
+      "You have reached your analysis limit for this hour. Please try again later."
+    );
+    if (limited) return limited;
 
     const body = await request.json();
     const parsed = analyzeRequestSchema.safeParse(body);
@@ -76,10 +85,7 @@ export async function POST(request: Request) {
       cvText = extractedText;
     }
 
-    // Truncate very long CVs
-    if (cvText.length > 12000) {
-      cvText = cvText.slice(0, 12000) + "\n\n[CV text truncated for analysis]";
-    }
+    cvText = smartTruncateCv(cvText);
 
     // Create analysis row
     const { data: analysis, error: insertError } = await supabase
