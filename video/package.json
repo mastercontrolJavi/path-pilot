@@ -1,0 +1,33 @@
+{
+  "name": "pathpilot-film",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "PathPilot product film (Remotion). Self-contained: no dependencies shared with the app.",
+  "scripts": {
+    "studio": "remotion studio",
+    "click": "node scripts/click-track.mjs",
+    "holds": "node scripts/check-holds.ts",
+    "stills": "node scripts/stills.mjs",
+    "render:preview": "remotion render Film16x9 out/pathpilot-16x9-animatic.mp4 --props=./scripts/props/preview-16x9.json --codec=h264 --crf=23",
+    "render:master": "remotion render Film16x9 out/pathpilot-16x9.mp4 --codec=h264 --crf=18",
+    "render:social": "remotion render Film9x16 out/pathpilot-9x16.mp4 --codec=h264 --crf=18",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.532",
+    "@remotion/cli": "4.0.532",
+    "@remotion/fonts": "4.0.532",
+    "@remotion/google-fonts": "4.0.532",
+    "@remotion/motion-blur": "4.0.532",
+    "@remotion/renderer": "4.0.532",
+    "@remotion/transitions": "4.0.532",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "remotion": "4.0.532"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "typescript": "^5"
+  }
+}
