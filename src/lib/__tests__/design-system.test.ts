@@ -87,7 +87,11 @@ describe("analytics", () => {
     const sink = vi.fn();
     const off = registerAnalyticsSink(sink);
     track("landing_cta_clicked", { location: "hero" });
-    expect(sink).toHaveBeenCalledWith("landing_cta_clicked", { location: "hero" });
+    expect(sink).toHaveBeenCalledWith(
+      "landing_cta_clicked",
+      { location: "hero" },
+      expect.objectContaining({ timestamp: expect.any(String) })
+    );
     off();
     track("landing_cta_clicked", { location: "nav" });
     expect(sink).toHaveBeenCalledTimes(1);

@@ -214,6 +214,11 @@
     transform-origin: left center;
     animation: pp-draw-x 0.16s var(--ease-out-soft) var(--fill-delay, 0s) both;
   }
+  /* App-flow page change (app)/template.tsx: 180ms crossfade (D8, no View Transitions).
+     `backwards` so nothing lingers on the wrapper once it ends. */
+  .pp-crossfade {
+    animation: pp-fade-in 0.18s var(--ease-route) backwards;
+  }
 }
 
 /* Landing hero map: hover or focus a destination to thicken its branch and dim the others. */
@@ -261,6 +266,12 @@
   }
   to {
     border-bottom-color: var(--color-contour);
+  }
+}
+
+@keyframes pp-fade-in {
+  from {
+    opacity: 0;
   }
 }
 
@@ -345,6 +356,11 @@
   .pp-pulse {
     animation: none !important;
     opacity: 0;
+  }
+  /* Page changes become a 120ms opacity fade rather than disappearing. */
+  .pp-crossfade {
+    animation-duration: 0.12s !important;
+    animation-timing-function: linear !important;
   }
 }
 

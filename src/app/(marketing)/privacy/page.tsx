@@ -64,13 +64,22 @@ export default function PrivacyPolicyPage() {
               </p>
             </div>
             <div>
-              <p className="font-medium mb-1">Page analytics</p>
+              <p className="font-medium mb-1">Page and product analytics</p>
               <p className="text-ink-muted">
                 We use Vercel Web Analytics to count page views. It doesn&apos;t
                 use cookies, and it reports aggregated figures such as which
                 pages are visited, the referring site, and the country and
                 device type, not a profile of you.
-                {/* COPY-CHECK: matches Vercel Web Analytics as configured (no custom events are sent today). */}
+              </p>
+              <p className="mt-2 text-ink-muted">
+                We also record a short list of product events with PostHog,
+                such as starting the questions, an analysis finishing or
+                failing, or downloading the PDF, so we can see where people
+                get stuck. Each event carries the page it happened on and a
+                random ID that lasts until you close the tab. Events never
+                include your CV, your answers, your name or your email, and
+                they aren&apos;t linked to your account. No cookies are used.
+                {/* COPY-CHECK: matches src/lib/analytics.ts + posthog-sink.ts (typed events only, sessionStorage ID, $process_person_profile false). Only active once NEXT_PUBLIC_POSTHOG_KEY is set. */}
               </p>
             </div>
             <div>
@@ -81,6 +90,8 @@ export default function PrivacyPolicyPage() {
                 check marks on your plan are saved there too. They stay on
                 your device; you can clear them from your account menu or by
                 clearing this site&apos;s data. Your CV is never saved there.
+                The random analytics ID described above is kept in session
+                storage, which your browser clears when you close the tab.
               </p>
             </div>
             <div>
@@ -125,6 +136,14 @@ export default function PrivacyPolicyPage() {
                 API to generate your analysis. OpenAI processes this data to
                 return a result to us and, per their API data usage policies,
                 does not use API content to train their models by default.
+              </p>
+            </div>
+            <div>
+              <p className="font-medium mb-1">PostHog</p>
+              <p className="text-ink-muted">
+                PostHog receives the product events described in section 1 and
+                turns them into usage reports for us. Like any web service, it
+                sees your IP address when your browser sends an event.
               </p>
             </div>
             <div>

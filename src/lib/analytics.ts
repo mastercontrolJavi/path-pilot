@@ -2,9 +2,13 @@
  * Typed product analytics.
  *
  * Every event PathPilot can emit is declared in `AnalyticsEvents`. Calls go to
- * the registered sinks; with no sink registered, events are dropped (and logged
- * in development). No provider is wired up yet: PostHog will be registered here
- * once there is a project key and the Privacy Policy describes it.
+ * the registered sinks (logged in development too).
+ *
+ * PostHog is the provider when NEXT_PUBLIC_POSTHOG_KEY is set. Its sink is
+ * loaded lazily: the first event schedules the import for an idle moment and
+ * events are queued until it registers, so nothing is added to the landing
+ * page's initial JS. Without a key, events are dropped. What is sent is
+ * described in the Privacy Policy ("Page and product analytics").
  *
  * Page views are still collected separately by Vercel Web Analytics
  * (<Analytics /> in the root layout).
@@ -35,17 +39,52 @@ export type AnalyticsEvents = {
 
 export type AnalyticsEventName = keyof AnalyticsEvents;
 
+/** When and where an event happened (it may be sent later, from another page). */
+export type EventMeta = { timestamp: string; pathname: string };
+
 export type AnalyticsSink = <E extends AnalyticsEventName>(
   event: E,
-  properties: AnalyticsEvents[E]
+  properties: AnalyticsEvents[E],
+  meta: EventMeta
 ) => void;
 
 const sinks = new Set<AnalyticsSink>();
 
-/** Register a provider (e.g. PostHog). Returns an unregister function. */
+const POSTHOG_KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+const POSTHOG_HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com";
+
+type Queued = [AnalyticsEventName, AnalyticsEvents[AnalyticsEventName], EventMeta];
+const QUEUE_LIMIT = 50;
+const queue: Queued[] = [];
+let providerRequested = false;
+
+/** Register a provider (e.g. PostHog). Flushes queued events. Returns an unregister function. */
 export function registerAnalyticsSink(sink: AnalyticsSink): () => void {
   sinks.add(sink);
+  for (const [event, properties, meta] of queue.splice(0)) send(sink, event, properties, meta);
   return () => sinks.delete(sink);
+}
+
+function send(sink: AnalyticsSink, ...[event, properties, meta]: Queued) {
+  try {
+    sink(event, properties, meta);
+  } catch {
+    // A failing provider must never break the product.
+  }
+}
+
+function requestProvider() {
+  if (providerRequested || !POSTHOG_KEY) return;
+  providerRequested = true;
+  const key = POSTHOG_KEY;
+  const load = () =>
+    import("./posthog-sink")
+      .then(({ createPostHogSink }) => registerAnalyticsSink(createPostHogSink(key, POSTHOG_HOST)))
+      .catch(() => {
+        queue.length = 0;
+      });
+  if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(load, { timeout: 4000 });
+  else window.setTimeout(load, 2000);
 }
 
 type PropsArg<E extends AnalyticsEventName> =
@@ -55,18 +94,19 @@ type PropsArg<E extends AnalyticsEventName> =
 export function track<E extends AnalyticsEventName>(event: E, ...args: PropsArg<E>): void {
   if (typeof window === "undefined") return;
   const properties = (args[0] ?? {}) as AnalyticsEvents[E];
+  const meta: EventMeta = { timestamp: new Date().toISOString(), pathname: window.location?.pathname ?? "" };
 
   if (process.env.NODE_ENV === "development") {
     console.debug("[analytics]", event, properties);
   }
 
-  for (const sink of sinks) {
-    try {
-      sink(event, properties);
-    } catch {
-      // A failing provider must never break the product.
-    }
+  if (sinks.size === 0 && POSTHOG_KEY) {
+    if (queue.length < QUEUE_LIMIT) queue.push([event, properties, meta]);
+    requestProvider();
+    return;
   }
+
+  for (const sink of sinks) send(sink, event, properties, meta);
 }
 
 /** Bucket a byte size for `cv_uploaded` without sending the exact size. */
