@@ -14,6 +14,7 @@ export function rateLimitedBody(retryAt: number | undefined, now = Date.now()): 
   const lead = "To keep PathPilot free during beta, there's a cap on how many routes can be built in a short time.";
   const kept = "Your CV and answers are kept.";
   if (!retryAt || retryAt <= now) return `${lead} Try again in a few minutes. ${kept}`;
-  const time = new Date(retryAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  // Non-breaking so "10:39 PM" never splits across lines.
+  const time = new Date(retryAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).replace(/\s/g, "\u00a0");
   return `${lead} You can try again after ${time}. ${kept}`;
 }

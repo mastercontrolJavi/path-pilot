@@ -19,7 +19,8 @@ describe("rateLimitedBody", () => {
 
   it("names the time another route can be built", () => {
     const at = new Date(2026, 9, 2, 15, 42).getTime();
-    const time = new Date(at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    const time = new Date(at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).replace(/\s/g, "\u00a0");
+    expect(time).not.toMatch(/ /);
     expect(rateLimitedBody(at, now)).toContain(`You can try again after ${time}.`);
     expect(rateLimitedBody(at, now)).toContain("Your CV and answers are kept.");
   });
