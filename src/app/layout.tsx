@@ -1,11 +1,28 @@
 import type { Metadata } from "next";
-import { Toaster } from "@/components/ui/sonner";
 import { Analytics } from "@vercel/analytics/next";
-import { SiteMotion } from "@/components/site-motion";
+import { fraunces, fragmentMono, generalSans } from "./fonts";
 import "./globals.css";
 
-export const metadata: Metadata = { title: "PathPilot | Find the work that fits", description: "A thoughtful CV analysis and a clear, seven-day route forward." };
+export const metadata: Metadata = {
+  title: "PathPilot - Map your next career move",
+  description:
+    "Upload your CV and see the roles your experience already fits, what they typically pay, the skills between you and them, and a seven-day plan to get moving.",
+};
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en" className="antialiased"><body className="min-h-screen flex flex-col"><SiteMotion />{children}<Toaster position="bottom-right" /><Analytics /></body></html>;
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html
+      lang="en"
+      className={`${fraunces.variable} ${fragmentMono.variable} ${generalSans.variable} h-full`}
+    >
+      <body className="flex min-h-full flex-col bg-paper font-sans text-ink">
+        {children}
+        <Analytics />
+      </body>
+    </html>
+  );
 }

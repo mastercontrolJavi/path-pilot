@@ -4,10 +4,20 @@ import type { QuestionnaireData } from "../schemas";
 
 describe("SYSTEM_PROMPT", () => {
   it("contains key instructions", () => {
-    expect(SYSTEM_PROMPT).toContain("elite early-career career strategist");
+    expect(SYSTEM_PROMPT).toContain("specializes in career changes");
     expect(SYSTEM_PROMPT).toContain("exactly 3 career paths");
     expect(SYSTEM_PROMPT).toContain("strict JSON");
     expect(SYSTEM_PROMPT).toContain("NOT a resume writing task");
+  });
+
+  it("calibrates seniority instead of defaulting to entry level", () => {
+    expect(SYSTEM_PROMPT).toContain("Calibrate seniority to the evidence in the CV");
+    expect(SYSTEM_PROMPT).not.toContain("Focus on entry-level");
+  });
+
+  it("asks for honest, labelled pay estimates", () => {
+    expect(SYSTEM_PROMPT).toContain("not live market data");
+    expect(SYSTEM_PROMPT).toContain("return null for the salary estimate");
   });
 
   it("warns against generic traits", () => {
@@ -72,6 +82,8 @@ describe("buildAnalysisPrompt", () => {
     expect(prompt).toContain("Exactly 3 strengths");
     expect(prompt).toContain("Exactly 3 realistic career paths");
     expect(prompt).toContain("7-day action plan");
+    expect(prompt).toContain("salary estimate for the target location");
+    expect(prompt).toContain("skills to build");
   });
 
   it("labels the write-in text when education status is Other", () => {

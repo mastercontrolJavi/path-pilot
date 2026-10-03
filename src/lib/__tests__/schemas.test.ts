@@ -3,7 +3,11 @@ import {
   questionnaireSchema,
   analysisResultSchema,
   analyzeRequestSchema,
+  careerPathSchema,
+  isLegacyResult,
+  normalizeAnalysisResult,
 } from "../schemas";
+import { sampleReport } from "../fixtures/sample-report";
 
 describe("questionnaireSchema", () => {
   const validQuestionnaire = {
@@ -110,7 +114,8 @@ describe("questionnaireSchema", () => {
 });
 
 describe("analysisResultSchema", () => {
-  const validResult = {
+  // Shape of reports generated before v2 (no pay or skills per path).
+  const legacyResult = {
     summary: "You are strongest in structured execution and analytical thinking.",
     strengths: [
       {
@@ -214,6 +219,27 @@ describe("analysisResultSchema", () => {
       "This analysis is a decision-support tool based on the information you provided. Results are grounded in your CV and responses but should be treated as directional guidance. Iterate, explore, and adjust as you learn more.",
   };
 
+  const v2Extras = {
+    salary_estimate: {
+      currency: "GBP",
+      low: 32000,
+      high: 40000,
+      period: "year" as const,
+      basis: "Entry to mid-level, London, base salary",
+    },
+    skills_you_bring: ["Process improvement", "Stakeholder reporting"],
+    skills_to_build: [{ skill: "SQL", effort: "weeks" as const, how: "Rebuild three reports on a public dataset" }],
+  };
+
+  const validResult = {
+    ...legacyResult,
+    career_paths: legacyResult.career_paths.map((p) => ({ ...p, ...v2Extras })),
+  };
+
+  it("rejects a legacy result under the v2 schema", () => {
+    expect(analysisResultSchema.safeParse(legacyResult).success).toBe(false);
+  });
+
   it("validates a correct analysis result", () => {
     const result = analysisResultSchema.safeParse(validResult);
     expect(result.success).toBe(true);
@@ -271,6 +297,116 @@ describe("analysisResultSchema", () => {
       ),
     });
     expect(result.success).toBe(false);
+  });
+});
+
+describe("report v2 fields", () => {
+  const path = {
+    title: "Operations Analyst",
+    fit_score: 85,
+    why_it_fits: "Fits",
+    why_it_is_realistic: "Realistic",
+    example_job_titles: ["a", "b", "c", "d", "e"],
+    best_for: "Someone",
+    tradeoff: "Some",
+    salary_estimate: { currency: "USD", low: 70000, high: 90000, period: "year", basis: "Mid-level, remote US" },
+    skills_you_bring: ["Process mapping", "Reporting"],
+    skills_to_build: [{ skill: "SQL", effort: "weeks", how: "Practice on a public dataset" }],
+  };
+
+  it("accepts a complete v2 career path", () => {
+    expect(careerPathSchema.safeParse(path).success).toBe(true);
+  });
+
+  it("accepts a null salary estimate when the location is too vague", () => {
+    expect(careerPathSchema.safeParse({ ...path, salary_estimate: null }).success).toBe(true);
+  });
+
+  it("requires the salary key to be present (strict structured outputs)", () => {
+    const rest: Record<string, unknown> = { ...path };
+    delete rest.salary_estimate;
+    expect(careerPathSchema.safeParse(rest).success).toBe(false);
+  });
+
+  it("requires 2-6 transferable skills", () => {
+    expect(careerPathSchema.safeParse({ ...path, skills_you_bring: ["Only one"] }).success).toBe(false);
+  });
+
+  it("only allows days, weeks or months as effort", () => {
+    const bad = { ...path, skills_to_build: [{ skill: "SQL", effort: "years", how: "x" }] };
+    expect(careerPathSchema.safeParse(bad).success).toBe(false);
+  });
+});
+
+describe("sample report fixture", () => {
+  it("matches the v2 schema the analysis produces", () => {
+    const result = analysisResultSchema.safeParse(sampleReport);
+    if (!result.success) console.error(result.error.issues);
+    expect(result.success).toBe(true);
+  });
+});
+
+describe("legacy reports", () => {
+  const legacy = {
+    summary: "s",
+    strengths: [],
+    career_paths: [
+      { title: "Old path", fit_score: 70, why_it_fits: "", why_it_is_realistic: "", example_job_titles: [], best_for: "", tradeoff: "" },
+    ],
+    avoid_roles: [],
+    action_plan: [],
+    cv_rewrites: [],
+    confidence_note: "",
+  };
+
+  it("detects reports without per-path skills", () => {
+    expect(isLegacyResult(legacy)).toBe(true);
+  });
+
+  it("normalizes missing v2 fields to explicit empty values", () => {
+    const normalized = normalizeAnalysisResult(legacy);
+    expect(normalized.career_paths[0].salary_estimate).toBeNull();
+    expect(normalized.career_paths[0].skills_you_bring).toEqual([]);
+    expect(normalized.career_paths[0].skills_to_build).toEqual([]);
+    expect(normalized.career_paths[0].title).toBe("Old path");
+  });
+
+  it("leaves v2 reports unchanged", () => {
+    const v2 = {
+      ...legacy,
+      career_paths: [{ ...legacy.career_paths[0], salary_estimate: null, skills_you_bring: ["a", "b"], skills_to_build: [] }],
+    };
+    expect(isLegacyResult(v2)).toBe(false);
+    expect(normalizeAnalysisResult(v2).career_paths[0].skills_you_bring).toEqual(["a", "b"]);
+  });
+});
+
+describe("education_status", () => {
+  const base = {
+    preferred_work_style: ["Structured"],
+    career_priorities: ["Growth"],
+    things_i_enjoy: "I enjoy organizing events",
+    things_i_dislike: "I dislike cold calling",
+    past_experiences: "Six years in operations",
+    target_location: "Remote",
+    biggest_current_problem: "I can't tell where my experience transfers",
+  };
+
+  it("accepts every option the wizard offers", async () => {
+    const { EDUCATION } = await import("../questionnaire-rules");
+    for (const education_status of EDUCATION.options) {
+      const extra =
+        education_status === EDUCATION.other
+          ? { education_status_other: "Bootcamp" }
+          : education_status === EDUCATION.inProgress
+            ? { field_of_study: "Design", expected_graduation: "Spring 2027" }
+            : {};
+      expect(questionnaireSchema.safeParse({ ...base, education_status, ...extra }).success).toBe(true);
+    }
+  });
+
+  it("is required", () => {
+    expect(questionnaireSchema.safeParse(base).success).toBe(false);
   });
 });
 

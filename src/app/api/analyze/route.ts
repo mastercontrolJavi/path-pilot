@@ -6,7 +6,8 @@ import { extractTextFromPdf } from "@/lib/pdf";
 import { generateObject } from "ai";
 import { NextResponse } from "next/server";
 
-export const maxDuration = 60;
+// Report v2 asks for more output; 300s is the Fluid Compute default ceiling.
+export const maxDuration = 300;
 
 export async function POST(request: Request) {
   try {
