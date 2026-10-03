@@ -15,6 +15,7 @@ import {
   REVIEW_INDEX,
   STEPS,
   firstIncomplete,
+  followUpsFor,
   timeLeftLabel,
   validateStep,
   type Answers,
@@ -115,6 +116,9 @@ export function Wizard({
   /** Single choice: show the confirmed row for a beat, then move on (unless they've already moved). */
   function choose(field: keyof Answers, value: string) {
     setAnswer(field, value as Answers[typeof field]);
+    const current = STEPS[step];
+    // A choice with follow-up inputs (e.g. field of study) waits for Continue.
+    if (current.kind === "question" && followUpsFor(current.question, value).length) return;
     const at = step;
     window.setTimeout(() => {
       setDraft((d) => (d.step !== at ? d : { ...d, step: at + 1, furthest: Math.max(d.furthest, at + 1) }));
@@ -224,6 +228,8 @@ export function Wizard({
           value={answers[field] ?? ""}
           onChange={(value) => setAnswer(field, value as Answers[typeof field])}
           onChoose={(value) => choose(field, value)}
+          followUpValues={answers}
+          onFollowUpChange={(name, value) => setAnswer(name, value)}
           onContinue={next}
           error={error}
         />

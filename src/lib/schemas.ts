@@ -1,33 +1,43 @@
 import { z } from "zod/v4";
-import { QUESTIONNAIRE_RULES } from "./questionnaire-rules";
+import { EDUCATION, QUESTIONNAIRE_RULES } from "./questionnaire-rules";
 
 const R = QUESTIONNAIRE_RULES;
 
-export const questionnaireSchema = z.object({
-  preferred_work_style: z.array(z.string()).min(R.preferred_work_style.min, R.preferred_work_style.message),
-  career_priorities: z
-    .array(z.string())
-    .min(R.career_priorities.min, R.career_priorities.message)
-    .max(R.career_priorities.max, R.career_priorities.maxMessage),
-  things_i_enjoy: z.string().min(R.things_i_enjoy.min, R.things_i_enjoy.message),
-  things_i_dislike: z.string().min(R.things_i_dislike.min, R.things_i_dislike.message),
-  past_experiences: z.string().min(R.past_experiences.min, R.past_experiences.message),
-  target_location: z.string().min(R.target_location.min, R.target_location.message),
-  salary_goal: z.string().optional(),
-  biggest_current_problem: z.string().min(R.biggest_current_problem.min, R.biggest_current_problem.message),
-  industries_of_interest: z.string().optional(),
-  hard_constraints: z.string().optional(),
-  // Added in report v2. Optional so older clients and saved drafts still validate.
-  education_status: z.enum(["enrolled", "graduated", "no_degree"]).optional(),
-});
+export const questionnaireSchema = z
+  .object({
+    education_status: z.string().min(1, EDUCATION.messages.status),
+    education_status_other: z.string().optional(),
+    field_of_study: z.string().optional(),
+    expected_graduation: z.string().optional(),
+    preferred_work_style: z.array(z.string()).min(R.preferred_work_style.min, R.preferred_work_style.message),
+    career_priorities: z
+      .array(z.string())
+      .min(R.career_priorities.min, R.career_priorities.message)
+      .max(R.career_priorities.max, R.career_priorities.maxMessage),
+    things_i_enjoy: z.string().min(R.things_i_enjoy.min, R.things_i_enjoy.message),
+    things_i_dislike: z.string().min(R.things_i_dislike.min, R.things_i_dislike.message),
+    past_experiences: z.string().min(R.past_experiences.min, R.past_experiences.message),
+    target_location: z.string().min(R.target_location.min, R.target_location.message),
+    salary_goal: z.string().optional(),
+    biggest_current_problem: z.string().min(R.biggest_current_problem.min, R.biggest_current_problem.message),
+    industries_of_interest: z.string().optional(),
+    hard_constraints: z.string().optional(),
+  })
+  .refine((data) => data.education_status !== EDUCATION.other || !!data.education_status_other?.trim(), {
+    message: EDUCATION.messages.other,
+    path: ["education_status_other"],
+  })
+  .refine((data) => data.education_status !== EDUCATION.inProgress || !!data.field_of_study?.trim(), {
+    message: EDUCATION.messages.fieldOfStudy,
+    path: ["field_of_study"],
+  })
+  .refine((data) => data.education_status !== EDUCATION.inProgress || !!data.expected_graduation?.trim(), {
+    message: EDUCATION.messages.graduation,
+    path: ["expected_graduation"],
+  });
 
 export type QuestionnaireData = z.infer<typeof questionnaireSchema>;
 
-export const EDUCATION_STATUS_LABELS: Record<NonNullable<QuestionnaireData["education_status"]>, string> = {
-  enrolled: "Currently studying",
-  graduated: "Graduated (degree or diploma)",
-  no_degree: "No degree",
-};
 
 export const strengthSchema = z.object({
   name: z.string(),

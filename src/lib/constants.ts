@@ -1,4 +1,5 @@
 import type { QuestionnaireData } from "./schemas";
+import { EDUCATION } from "./questionnaire-rules";
 
 export type QuestionType = "single-select" | "multi-select" | "text";
 
@@ -21,7 +22,17 @@ export interface QuestionDefinition {
   maxSelections?: number;
   /** Text answers that need room (textarea) rather than a single line. */
   multiline?: boolean;
+  /** Extra required inputs shown under a single choice when it is picked. */
+  followUps?: { when: string; fields: FollowUpField[] }[];
 }
+
+export type FollowUpField = {
+  name: "education_status_other" | "field_of_study" | "expected_graduation";
+  label: string;
+  placeholder: string;
+  /** Shown when the field is left empty. */
+  message: string;
+};
 
 export const QUESTIONS: QuestionDefinition[] = [
   {
@@ -103,10 +114,27 @@ export const QUESTIONS: QuestionDefinition[] = [
     description: "Some routes expect a degree; many hire on proven skill.",
     short: "Education",
     type: "single-select",
-    choices: [
-      { value: "enrolled", label: "Currently studying" },
-      { value: "graduated", label: "Graduated (degree or diploma)" },
-      { value: "no_degree", label: "No degree" },
+    // Stored values match production (PR #17); the option text is the value.
+    choices: EDUCATION.options.map((option) => ({ value: option, label: option })),
+    followUps: [
+      {
+        when: EDUCATION.other,
+        fields: [
+          {
+            name: "education_status_other",
+            label: "Tell us more",
+            placeholder: "e.g. bootcamp graduate, professional certification, still deciding",
+            message: EDUCATION.messages.other,
+          },
+        ],
+      },
+      {
+        when: EDUCATION.inProgress,
+        fields: [
+          { name: "field_of_study", label: "Field of study", placeholder: "e.g. Computer Science", message: EDUCATION.messages.fieldOfStudy },
+          { name: "expected_graduation", label: "Expected graduation", placeholder: "e.g. Spring 2027", message: EDUCATION.messages.graduation },
+        ],
+      },
     ],
     required: true,
   },

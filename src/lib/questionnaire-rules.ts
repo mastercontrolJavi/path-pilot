@@ -13,3 +13,25 @@ export const QUESTIONNAIRE_RULES = {
 } as const;
 
 export type RuledField = keyof typeof QUESTIONNAIRE_RULES;
+
+/**
+ * Education answers, in the format production has stored since PR #17. The
+ * option text is the stored value, so never reword an option.
+ */
+export const EDUCATION = {
+  inProgress: "Currently pursuing a degree (in progress)",
+  other: "Other",
+  options: [
+    "Currently pursuing a degree (in progress)",
+    "Have a degree, not currently pursuing further education",
+    "Some college, no degree",
+    "No formal degree / self-taught",
+    "Other",
+  ],
+  messages: {
+    status: "Select where you're at with school",
+    other: "Tell us more about your education status",
+    fieldOfStudy: "Enter your field of study",
+    graduation: "Enter your expected graduation timeframe",
+  },
+} as const;

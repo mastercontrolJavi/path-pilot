@@ -36,7 +36,7 @@ const questionnaire: QuestionnaireData = {
   biggest_current_problem: "I know I want out of operations but can't tell where my experience transfers.",
   industries_of_interest: "Software, SaaS",
   hard_constraints: "No relocation",
-  education_status: "no_degree",
+  education_status: "No formal degree / self-taught",
 };
 
 describe.skipIf(!live)("live analysis (OpenAI)", () => {

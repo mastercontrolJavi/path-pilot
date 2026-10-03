@@ -2,13 +2,15 @@
 
 import { useEffect, useRef, type KeyboardEvent } from "react";
 import { motion } from "motion/react";
-import type { QuestionDefinition } from "@/lib/constants";
+import type { FollowUpField, QuestionDefinition } from "@/lib/constants";
 import { RadioGroup, RadioGroupRow } from "@/components/ui/radio-group";
 import { CheckboxRow } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { KeyHint } from "@/components/pp/key-hint";
 import { ERROR_ID, HELP_ID, StepError, StepHeading, TITLE_ID } from "./step-chrome";
+import { followUpsFor } from "./steps";
 
 export const AUTO_ADVANCE_MS = 220;
 
@@ -27,6 +29,8 @@ export function QuestionStep({
   value,
   onChange,
   onChoose,
+  followUpValues,
+  onFollowUpChange,
   onContinue,
   error,
 }: {
@@ -35,10 +39,22 @@ export function QuestionStep({
   onChange: (value: Value) => void;
   /** Single choice picked by click, tap, Enter, Space or number key: confirm, then advance. */
   onChoose: (value: string) => void;
+  /** Current text of follow-up inputs (e.g. field of study), keyed by field name. */
+  followUpValues: Record<FollowUpField["name"], string>;
+  onFollowUpChange: (name: FollowUpField["name"], value: string) => void;
   onContinue: () => void;
   error: string | null;
 }) {
   const rowsRef = useRef<HTMLDivElement>(null);
+  const firstFollowUpRef = useRef<HTMLInputElement>(null);
+  const followUps = typeof value === "string" ? followUpsFor(question, value) : [];
+
+  // Confirm a single choice. When it needs more detail, move focus to the first follow-up input
+  // (not on arrow-key browsing, which only changes the value).
+  function pick(v: string) {
+    onChoose(v);
+    if (followUpsFor(question, v).length) window.setTimeout(() => firstFollowUpRef.current?.focus(), 0);
+  }
   const describedBy = [HELP_ID, error ? ERROR_ID : null].filter(Boolean).join(" ");
   // Arrow keys move between radio rows (and select, per the radio pattern) without advancing.
   const lastKeyWasArrow = useRef(false);
@@ -61,7 +77,7 @@ export function QuestionStep({
       if (!Number.isInteger(n) || n < 1) return;
       if (question.type === "single-select" && question.choices?.[n - 1]) {
         e.preventDefault();
-        onChoose(question.choices[n - 1].value);
+        pick(question.choices[n - 1].value);
       }
       if (question.type === "multi-select" && question.options?.[n - 1]) {
         e.preventDefault();
@@ -106,7 +122,7 @@ export function QuestionStep({
             }}
             onValueChange={(v) => {
               if (lastKeyWasArrow.current) onChange(String(v));
-              else onChoose(String(v));
+              else pick(String(v));
             }}
           >
             {question.choices.map((choice, i) => (
@@ -115,12 +131,12 @@ export function QuestionStep({
                 value={choice.value}
                 hint={<KeyHint>{i + 1}</KeyHint>}
                 // Re-picking the current answer doesn't change the value, so confirm it here.
-                onClick={() => value === choice.value && onChoose(choice.value)}
+                onClick={() => value === choice.value && pick(choice.value)}
                 onKeyDown={(e) => {
                   // Enter confirms the focused row (Space already selects it).
                   if (e.key === "Enter") {
                     e.preventDefault();
-                    onChoose(choice.value);
+                    pick(choice.value);
                   }
                 }}
               >
@@ -134,6 +150,26 @@ export function QuestionStep({
               </RadioGroupRow>
             ))}
           </RadioGroup>
+        )}
+        {followUps.length > 0 && (
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {followUps.map((f, i) => (
+              <div key={f.name} className={followUps.length === 1 ? "sm:col-span-2" : undefined}>
+                <Label htmlFor={`follow-up-${f.name}`}>{f.label}</Label>
+                <Input
+                  ref={i === 0 ? firstFollowUpRef : undefined}
+                  id={`follow-up-${f.name}`}
+                  className="mt-2"
+                  value={followUpValues[f.name]}
+                  onChange={(e) => onFollowUpChange(f.name, e.target.value)}
+                  onKeyDown={onTextKey}
+                  placeholder={f.placeholder}
+                  aria-invalid={error && !followUpValues[f.name].trim() ? true : undefined}
+                  aria-describedby={error ? ERROR_ID : undefined}
+                />
+              </div>
+            ))}
+          </div>
         )}
 
         {question.type === "multi-select" && question.options && (

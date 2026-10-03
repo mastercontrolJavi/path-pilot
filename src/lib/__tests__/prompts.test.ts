@@ -28,6 +28,9 @@ describe("SYSTEM_PROMPT", () => {
 
 describe("buildAnalysisPrompt", () => {
   const mockQuestionnaire: QuestionnaireData = {
+    education_status: "Currently pursuing a degree (in progress)",
+    field_of_study: "Computer Science",
+    expected_graduation: "Spring 2027",
     preferred_work_style: ["Structured", "Analytical"],
     career_priorities: ["Growth", "Stability"],
     things_i_enjoy: "Organizing and problem-solving",
@@ -47,6 +50,9 @@ describe("buildAnalysisPrompt", () => {
 
   it("includes all questionnaire fields", () => {
     const prompt = buildAnalysisPrompt("CV text", mockQuestionnaire);
+    expect(prompt).toContain("Education Status:");
+    expect(prompt).toContain("Field of study: Computer Science");
+    expect(prompt).toContain("Expected graduation: Spring 2027");
     expect(prompt).toContain("Structured, Analytical");
     expect(prompt).toContain("Growth, Stability");
     expect(prompt).toContain("Organizing and problem-solving");
@@ -71,13 +77,6 @@ describe("buildAnalysisPrompt", () => {
     expect(prompt).toContain("None specified");
   });
 
-  it("includes education when given and says so when not", () => {
-    expect(buildAnalysisPrompt("CV", { ...mockQuestionnaire, education_status: "no_degree" })).toContain(
-      "**Education:** No degree"
-    );
-    expect(buildAnalysisPrompt("CV", mockQuestionnaire)).toContain("**Education:** Not specified");
-  });
-
   it("includes instructions for output format", () => {
     const prompt = buildAnalysisPrompt("CV text", mockQuestionnaire);
     expect(prompt).toContain("Exactly 3 strengths");
@@ -85,5 +84,31 @@ describe("buildAnalysisPrompt", () => {
     expect(prompt).toContain("7-day action plan");
     expect(prompt).toContain("salary estimate for the target location");
     expect(prompt).toContain("skills to build");
+  });
+
+  it("labels the write-in text when education status is Other", () => {
+    const withOther: QuestionnaireData = {
+      ...mockQuestionnaire,
+      education_status: "Other",
+      education_status_other: "Trade school certification",
+      field_of_study: undefined,
+      expected_graduation: undefined,
+    };
+    const prompt = buildAnalysisPrompt("CV text", withOther);
+    expect(prompt).toContain("Education Status:** Other (Trade school certification)");
+  });
+
+  it("omits follow-up details when not currently pursuing a degree", () => {
+    const notPursuing: QuestionnaireData = {
+      ...mockQuestionnaire,
+      education_status: "Have a degree, not currently pursuing further education",
+      field_of_study: undefined,
+      expected_graduation: undefined,
+    };
+    const prompt = buildAnalysisPrompt("CV text", notPursuing);
+    expect(prompt).toContain(
+      "Education Status:** Have a degree, not currently pursuing further education"
+    );
+    expect(prompt).not.toContain("Field of study:");
   });
 });

@@ -27,7 +27,7 @@ const complete: Answers = {
   past_experiences: "Six years in operations",
   target_location: "Remote US",
   biggest_current_problem: "I can't tell where my experience transfers",
-  education_status: "no_degree",
+  education_status: "No formal degree / self-taught",
 };
 
 describe("wizard steps", () => {
@@ -66,6 +66,33 @@ describe("wizard steps", () => {
     expect(validateStep(step("q7"), complete, pasted)).toBeNull(); // optional and empty
   });
 
+  it("asks for follow-ups the chosen education option needs, and ignores stale draft values", () => {
+    const studying = { ...complete, education_status: "Currently pursuing a degree (in progress)" };
+    expect(validateStep(step("q_education"), studying, pasted)).toBe("Enter your field of study.");
+    expect(validateStep(step("q_education"), { ...studying, field_of_study: "Design" }, pasted)).toBe(
+      "Enter your expected graduation timeframe."
+    );
+    expect(validateStep(step("q_education"), { ...complete, education_status: "Other" }, pasted)).toBe(
+      "Tell us more about your education status."
+    );
+    expect(validateStep(step("q_education"), { ...complete, education_status: "no_degree" }, pasted)).toBe(
+      "Choose one to continue."
+    );
+  });
+
+  it("sends follow-ups only with the option that asked for them", () => {
+    const q = toQuestionnaire({ ...complete, field_of_study: "Design", expected_graduation: "Spring 2027" });
+    expect(q.field_of_study).toBeUndefined();
+    const s = toQuestionnaire({
+      ...complete,
+      education_status: "Currently pursuing a degree (in progress)",
+      field_of_study: " Design ",
+      expected_graduation: "Spring 2027",
+    });
+    expect(s.field_of_study).toBe("Design");
+    expect(questionnaireSchema.safeParse(s).success).toBe(true);
+  });
+
   it("finds the first step that needs attention", () => {
     expect(firstIncomplete(complete, noCv)).toBe(0);
     expect(firstIncomplete({ ...complete, target_location: "" }, pasted)).toBe(STEPS.findIndex((s) => s.id === "q6"));
@@ -82,7 +109,14 @@ describe("wizard steps", () => {
     expect(summarize(step("q1"), { ...complete, preferred_work_style: ["Structured", "Analytical"] }, pasted)).toBe(
       "Structured, Analytical"
     );
-    expect(summarize(step("q_education"), complete, pasted)).toBe("No degree");
+    expect(summarize(step("q_education"), complete, pasted)).toBe("No formal degree / self-taught");
+    expect(
+      summarize(
+        step("q_education"),
+        { ...complete, education_status: "Currently pursuing a degree (in progress)", field_of_study: "Design", expected_graduation: "Spring 2027" },
+        pasted
+      )
+    ).toBe("Currently pursuing a degree (in progress): Design, Spring 2027");
     expect(summarize(step("cv"), complete, pasted)).toBe("80 characters pasted");
   });
 

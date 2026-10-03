@@ -1,5 +1,5 @@
-import { QUESTIONS, type QuestionDefinition } from "@/lib/constants";
-import { QUESTIONNAIRE_RULES, type RuledField } from "@/lib/questionnaire-rules";
+import { QUESTIONS, type FollowUpField, type QuestionDefinition } from "@/lib/constants";
+import { EDUCATION, QUESTIONNAIRE_RULES, type RuledField } from "@/lib/questionnaire-rules";
 // Type-only: keeps zod out of the wizard's client bundle.
 import type { QuestionnaireData } from "@/lib/schemas";
 
@@ -32,7 +32,10 @@ export type Answers = {
   biggest_current_problem: string;
   industries_of_interest: string;
   hard_constraints: string;
-  education_status: QuestionnaireData["education_status"] | "";
+  education_status: string;
+  education_status_other: string;
+  field_of_study: string;
+  expected_graduation: string;
 };
 
 export const EMPTY_ANSWERS: Answers = {
@@ -47,6 +50,9 @@ export const EMPTY_ANSWERS: Answers = {
   industries_of_interest: "",
   hard_constraints: "",
   education_status: "",
+  education_status_other: "",
+  field_of_study: "",
+  expected_graduation: "",
 };
 
 export type CvState = { mode: "upload" | "paste"; file: File | null; text: string };
@@ -69,7 +75,11 @@ export function validateStep(step: Step, answers: Answers, cv: CvState): string 
   const value = answers[q.fieldName as keyof Answers];
 
   if (q.type === "single-select") {
-    return value ? null : q.required ? "Choose one to continue." : null;
+    // A saved draft can hold a value that is no longer offered: treat it as unanswered.
+    const picked = q.choices?.some((c) => c.value === value) ? (value as string) : "";
+    if (!picked) return q.required ? "Choose one to continue." : null;
+    const missing = followUpsFor(q, picked).find((f) => !answers[f.name].trim());
+    return missing ? `${missing.message}.` : null;
   }
   if (!q.required && (value === "" || (Array.isArray(value) && value.length === 0))) return null;
 
@@ -83,6 +93,11 @@ export function validateStep(step: Step, answers: Answers, cv: CvState): string 
   }
   if (typeof value === "string" && value.trim().length >= rule.min) return null;
   return `${rule.message}. A sentence is plenty.`;
+}
+
+/** Extra inputs this single choice needs (e.g. field of study when still studying). */
+export function followUpsFor(q: QuestionDefinition, value: string): FollowUpField[] {
+  return q.followUps?.find((f) => f.when === value)?.fields ?? [];
 }
 
 /** The answers in the shape /api/analyze expects. */
@@ -99,7 +114,11 @@ export function toQuestionnaire(answers: Answers): QuestionnaireData {
     biggest_current_problem: answers.biggest_current_problem.trim(),
     industries_of_interest: opt(answers.industries_of_interest),
     hard_constraints: opt(answers.hard_constraints),
-    education_status: answers.education_status || undefined,
+    education_status: answers.education_status,
+    // Follow-ups only travel with the choice that asked for them.
+    education_status_other: answers.education_status === EDUCATION.other ? opt(answers.education_status_other) : undefined,
+    field_of_study: answers.education_status === EDUCATION.inProgress ? opt(answers.field_of_study) : undefined,
+    expected_graduation: answers.education_status === EDUCATION.inProgress ? opt(answers.expected_graduation) : undefined,
   };
 }
 
@@ -119,7 +138,14 @@ export function summarize(step: Step, answers: Answers, cv: CvState): string | n
   const q = step.question;
   const value = answers[q.fieldName as keyof Answers];
   if (Array.isArray(value)) return value.length ? value.join(", ") : null;
-  if (q.choices) return q.choices.find((c) => c.value === value)?.label ?? null;
+  if (q.choices) {
+    const label = q.choices.find((c) => c.value === value)?.label;
+    if (!label) return null;
+    const extra = followUpsFor(q, value as string)
+      .map((f) => answers[f.name].trim())
+      .filter(Boolean);
+    return extra.length ? `${label}: ${extra.join(", ")}` : label;
+  }
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
