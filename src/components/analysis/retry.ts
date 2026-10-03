@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { track } from "@/lib/analytics";
 import type { RunOutcome } from "./analysis-run";
+import { rateLimitedOutcome } from "./rate-limit";
 
 /**
  * "Try again" without re-entering anything: re-send the CV text and answers
@@ -29,6 +30,7 @@ export async function retryAnalysis(analysisId: string): Promise<RunOutcome> {
     const body = (await response.json().catch(() => ({}))) as { analysisId?: string };
     if (response.status === 401) return { ok: false, kind: "session" };
     if (response.status === 504) return { ok: false, kind: "timeout" };
+    if (response.status === 429) return rateLimitedOutcome(response);
     if (!response.ok || !body.analysisId) return { ok: false, kind: "server" };
     return { ok: true, analysisId: body.analysisId };
   } catch {

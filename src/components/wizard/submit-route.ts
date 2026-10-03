@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { sizeBucket, track } from "@/lib/analytics";
 import type { RunOutcome } from "@/components/analysis/analysis-run";
+import { rateLimitedOutcome } from "@/components/analysis/rate-limit";
 import { toQuestionnaire, type Answers, type CvState } from "./steps";
 
 /** Remembers the last upload so "Try again" doesn't upload the same file twice. */
@@ -67,6 +68,7 @@ export async function submitRoute({
 
     if (response.status === 401) return { ok: false, kind: "session" };
     if (response.status === 504) return { ok: false, kind: "timeout" };
+    if (response.status === 429) return rateLimitedOutcome(response);
     if (!response.ok || !body.analysisId) {
       if (/extract|pdf/i.test(body.error ?? "")) {
         track("cv_upload_failed", { reason: "unreadable" });
