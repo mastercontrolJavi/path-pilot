@@ -1,5 +1,6 @@
-import { Composition, type CalculateMetadataFunction } from "remotion";
+import { Composition, Still, type CalculateMetadataFunction } from "remotion";
 import { Film, type FilmProps } from "./films/Film";
+import { Thumbnail, type ThumbnailProps } from "./stills/Thumbnail";
 import { FILM_S } from "./timing";
 import "./fonts";
 
@@ -33,6 +34,8 @@ export function RemotionRoot() {
         fps={30}
         durationInFrames={Math.round(FILM_S * 30)}
       />
+      {/* Portfolio thumbnail, 16:9. Render at --scale=2 for 3840×2160. */}
+      <Still id="Thumbnail" component={Thumbnail} defaultProps={{ variant: "contour" } satisfies ThumbnailProps} width={1920} height={1080} />
     </>
   );
 }
