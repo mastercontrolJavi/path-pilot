@@ -14,6 +14,7 @@ const OUTCOMES = [
   ["unreadable", "Unreadable PDF"],
   ["network", "Network error"],
   ["session", "Signed out"],
+  ["rate_limited", "Rate limited"],
 ] as const;
 type Outcome = (typeof OUTCOMES)[number][0];
 
@@ -27,6 +28,7 @@ export function WizardPreview() {
     await wait(900);
     if (outcome === "session") return { ok: false, kind: "session" };
     if (outcome === "network") return { ok: false, kind: "network" };
+    if (outcome === "rate_limited") return { ok: false, kind: "rate_limited", retryAt: Date.now() + 23 * 60_000 };
     onSent();
     await wait(outcome === "slow" ? 35_000 : 7_000);
     if (outcome === "unreadable") return { ok: false, kind: "unreadable" };

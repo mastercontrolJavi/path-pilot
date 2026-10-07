@@ -11,10 +11,18 @@ import { MotionRoot } from "@/components/pp/motion-root";
 import { useReducedMotion } from "@/lib/motion";
 import { track } from "@/lib/analytics";
 import { STAGES, stageAt, waitMessage } from "./stages";
+import { rateLimitedBody } from "./rate-limit";
 
 export type RunOutcome =
   | { ok: true; analysisId: string }
-  | { ok: false; kind: "session" | "upload" | "network" | "unreadable" | "server" | "failed" | "timeout" };
+  | {
+      ok: false;
+      kind: "session" | "upload" | "network" | "unreadable" | "server" | "failed" | "timeout" | "rate_limited";
+      /** rate_limited only: when another analysis is allowed (epoch ms). */
+      retryAt?: number;
+    };
+
+type FailureKind = Exclude<RunOutcome, { ok: true }>["kind"];
 
 export type StartRun = (hooks: { onSent: () => void }) => Promise<RunOutcome>;
 
@@ -29,7 +37,7 @@ export const checkStatus: StatusCheck = async (id) => {
   return "processing";
 };
 
-const FAILURE: Record<Exclude<RunOutcome, { ok: true }>["kind"], { title: string; body: string }> = {
+const FAILURE: Record<FailureKind, { title: string; body: string }> = {
   failed: {
     title: "The analysis didn't finish",
     body: "This is usually temporary. Your CV and answers are kept, so trying again takes one click.",
@@ -57,6 +65,10 @@ const FAILURE: Record<Exclude<RunOutcome, { ok: true }>["kind"], { title: string
   unreadable: {
     title: "We couldn't read text in that PDF",
     body: "It may be a scanned image. Export it as a text PDF, or paste your CV text instead.",
+  },
+  rate_limited: {
+    title: "You've reached the limit for now",
+    body: rateLimitedBody(undefined),
   },
 };
 
@@ -94,7 +106,8 @@ export function AnalysisRun({
   const reduced = useReducedMotion();
   const [attempt, setAttempt] = useState(0);
   const [phase, setPhase] = useState<"running" | "done" | "failed">("running");
-  const [failure, setFailure] = useState<Exclude<RunOutcome, { ok: true }>["kind"] | null>(null);
+  const [failure, setFailure] = useState<FailureKind | null>(null);
+  const [retryAt, setRetryAt] = useState<number | undefined>();
   const [startedAt, setStartedAt] = useState(() => Date.now() - initialSeconds * 1000);
   const [sentAt, setSentAt] = useState<number | null>(() => (sentAlready ? Date.now() - initialSeconds * 1000 : null));
   const [now, setNow] = useState(() => Date.now());
@@ -149,6 +162,7 @@ export function AnalysisRun({
         return;
       }
       setFailure(outcome.kind);
+      setRetryAt(outcome.retryAt);
       setPhase("failed");
     })();
 
@@ -180,7 +194,7 @@ export function AnalysisRun({
     failureBlock = (
       <ErrorState
         title={copy.title}
-        description={copy.body}
+        description={failure === "rate_limited" ? rateLimitedBody(retryAt) : copy.body}
         action={
           <div className="flex flex-wrap gap-3">
             {failure === "session" ? (
